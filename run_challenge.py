@@ -7,8 +7,8 @@ import platform
 CPLEX_PATH = "$HOME/CPLEX_Studio2211/opl/bin/arm64_osx/"
 OR_TOOLS_PATH = "$HOME/Documents/or-tools/build/lib/"
 
-USE_CPLEX = True
-USE_OR_TOOLS = True
+USE_CPLEX = False
+USE_OR_TOOLS = False
 
 MAX_RUNNING_TIME = "605s"
 
@@ -20,6 +20,10 @@ def compile_code(source_folder):
     # Run Maven compile
     result = subprocess.run(["mvn", "clean", "package"], capture_output=True, text=True)
 
+
+    print("STDOUT:\n", result.stdout)
+    print("STDERR:\n", result.stderr)
+    
     if result.returncode != 0:
         print("Maven compilation failed:")
         print(result.stderr)

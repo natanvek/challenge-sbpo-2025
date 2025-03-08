@@ -1,0 +1,3 @@
+Compiling code in src/main/java/org/sbpo2025/challenge...
+Maven compilation failed:
+
