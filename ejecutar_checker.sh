@@ -12,7 +12,7 @@ BASE_DIR="$(pwd)"
 
 if [ "$#" -eq 0 ]; then
     # Si no se pasaron heurísticas, se asigna un valor por defecto
-    heuristics=("Heuristica1" "Heuristica2")  # Valor por defecto
+    heuristics=("Heuristica2" "Heuristica3")  # Valor por defecto
 else
     # Si hay más de tres argumentos, tomamos los que siguen desde el cuarto
     heuristics=("${@:1}")

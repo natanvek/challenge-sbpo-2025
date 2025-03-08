@@ -125,7 +125,9 @@ public class Challenge {
 
         ChallengeSolver[] solvers = new ChallengeSolver[] {
             new Heuristica1(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-            new Heuristica2(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB)
+            new Heuristica2(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
+            new Heuristica3(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
+            new BF10(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB)
         };
         String solverName = args[2];
         
