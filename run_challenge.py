@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+import argparse
 import platform
 
 # Paths to the libraries
@@ -33,7 +34,7 @@ def compile_code(source_folder):
     return True
 
 
-def run_benchmark(source_folder, input_folder, output_folder):
+def run_benchmark(source_folder, input_folder, output_folder, heuristicas):
     # Change to the source folder
     os.chdir(source_folder)
 
@@ -57,29 +58,46 @@ def run_benchmark(source_folder, input_folder, output_folder):
         if filename.endswith(".txt"):
             print(f"Running {filename}")
             input_file = os.path.join(input_folder, filename)
-            output_file = os.path.join(output_folder, f"{os.path.splitext(filename)[0]}.txt")
-            with open(output_file, "w") as out:
-                # Main Java command
-                cmd = [timeout_command, MAX_RUNNING_TIME, "java", "-Xmx16g", "-jar", "target/ChallengeSBPO2025-1.0.jar",
-                       input_file,
-                       output_file]
-                if USE_CPLEX or USE_OR_TOOLS:
-                    cmd.insert(3, f"-Djava.library.path={libraries}")
 
-                result = subprocess.run(cmd, stderr=subprocess.PIPE, text=True)
-                if result.returncode != 0:
-                    print(f"Execution failed for {input_file}:")
-                    print(result.stderr)
+            for heuristica in heuristicas:
+                heuristica_output_folder = os.path.join(output_folder, heuristica)
+                if not os.path.exists(heuristica_output_folder):
+                    os.makedirs(heuristica_output_folder)
+
+                output_file = os.path.join(heuristica_output_folder, f"{os.path.splitext(filename)[0]}.txt")
+                with open(output_file, "w") as out:
+                    # Main Java command
+                    cmd = [timeout_command, MAX_RUNNING_TIME, "java", "-Xmx16g", "-jar", "target/ChallengeSBPO2025-1.0.jar",
+                        input_file,
+                        output_file, 
+                        heuristica]
+                    if USE_CPLEX or USE_OR_TOOLS:
+                        cmd.insert(3, f"-Djava.library.path={libraries}")
+
+                    result = subprocess.run(cmd, stderr=subprocess.PIPE, text=True)
+                    if result.returncode != 0:
+                        print(f"Execution failed for {input_file}:")
+                        print(result.stderr)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
-        print("Usage: python run_challenge.py <source_folder> <input_folder> <output_folder>")
+    if len(sys.argv) < 4:
+        print("Usage: python run_challenge.py <source_folder> <input_folder> <output_folder> <heuristica1> <...>")
         sys.exit(1)
 
     source_folder = sys.argv[1]
     input_folder = sys.argv[2]
     output_folder = sys.argv[3]
 
+    parser = argparse.ArgumentParser(description="Ejecutar heurísticas.")
+    parser.add_argument(
+        'heuristics', 
+        nargs='+',  # Esto permite múltiples heurísticas como argumentos
+        help="Lista de heurísticas a ejecutar (por ejemplo, Heuristica1 Heuristica2)"
+    )
+
+    # Recoger las heurísticas a partir de argv[4] en adelante
+    args = parser.parse_args(sys.argv[4:])
+
     if compile_code(source_folder):
-        run_benchmark(source_folder, input_folder, output_folder)
+        run_benchmark(source_folder, input_folder, output_folder, args.heuristics)

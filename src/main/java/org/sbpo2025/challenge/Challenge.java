@@ -1,6 +1,9 @@
 package org.sbpo2025.challenge;
+import org.sbpo2025.challenge.solvers.*;
 
 import org.apache.commons.lang3.time.StopWatch;
+
+import org.sbpo2025.challenge.solvers.Heuristica1;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -112,17 +115,25 @@ public class Challenge {
         // Start the stopwatch to track the running time
         StopWatch stopWatch = StopWatch.createStarted();
 
-        if (args.length != 2) {
-            System.out.println("Usage: java -jar target/ChallengeSBPO2025-1.0.jar <inputFilePath> <outputFilePath>");
+        if (args.length != 3) {
+            System.out.println("Usage: java -jar target/ChallengeSBPO2025-1.0.jar <inputFilePath> <outputFilePath> <heuristicaName>");
             return;
         }
-
+    
         Challenge challenge = new Challenge();
         challenge.readInput(args[0]);
-        var challengeSolver = new ChallengeSolver(
-                challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB);
-        ChallengeSolution challengeSolution = challengeSolver.solve(stopWatch);
 
-        challenge.writeOutput(challengeSolution, args[1]);
+        ChallengeSolver[] solvers = new ChallengeSolver[] {
+            new Heuristica1(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
+            new Heuristica2(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB)
+        };
+        String solverName = args[2];
+        
+        for (ChallengeSolver solver : solvers) {
+            if(!solver.getName().equals(solverName)) continue;
+            ChallengeSolution challengeSolution = solver.solve(stopWatch);
+            challenge.writeOutput(challengeSolution, args[1]);
+        }
+
     }
 }
