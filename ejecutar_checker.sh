@@ -31,7 +31,7 @@ for instance in "$DATASET_DIR"/*.txt; do
 
     for solver_dir in "$OUTPUT_DIR"/*/; do 
         echo "---> Results for $(basename "$solver_dir"):"
-        python checker.py "$DATASET_DIR/$instance" "$solver_dir/$instance"
+        python3 checker.py "$DATASET_DIR/$instance" "$solver_dir/$instance"
         echo ""
     done
 

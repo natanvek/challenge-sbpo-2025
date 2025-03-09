@@ -43,6 +43,7 @@ public abstract class ChallengeSolver {
         Set<Integer> selectedOrders = challengeSolution.orders();
         Set<Integer> visitedAisles = challengeSolution.aisles();
         if (selectedOrders == null || visitedAisles == null || selectedOrders.isEmpty() || visitedAisles.isEmpty()) {
+            System.out.println("nonFeasibleError: no orders or no aisles");
             return false;
         }
 
@@ -66,12 +67,14 @@ public abstract class ChallengeSolver {
         // Check if the total units picked are within bounds
         int totalUnits = Arrays.stream(totalUnitsPicked).sum();
         if (totalUnits < waveSizeLB || totalUnits > waveSizeUB) {
+            System.out.println("nonFeasibleError: out of bounds solution");
             return false;
         }
 
         // Check if the units picked do not exceed the units available
         for (int i = 0; i < nItems; i++) {
             if (totalUnitsPicked[i] > totalUnitsAvailable[i]) {
+                System.out.println("nonFeasibleError: element  i was picked more times than available");
                 return false;
             }
         }
