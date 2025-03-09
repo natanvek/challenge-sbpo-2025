@@ -91,7 +91,6 @@ public abstract class Heuristica extends ChallengeSolver {
 
     public Heuristica(List<Map<Integer, Integer>> _orders, List<Map<Integer, Integer>> _aisles, int nItems, int waveSizeLB, int waveSizeUB) {
         super(_orders, _aisles, nItems, waveSizeLB, waveSizeUB);
-        System.out.println("constructor heuristica");
         ordersh = new Order[_orders.size()];
         for(int o = 0; o < _orders.size(); o++) {
             ordersh[o] = new Order(o, _orders.get(o), 0);

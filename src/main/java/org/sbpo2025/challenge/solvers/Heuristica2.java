@@ -26,7 +26,6 @@ public class Heuristica2 extends Heuristica {
     
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {
-        System.out.println("waveSizeUB2: " + waveSizeUB);
         int os = ordersh.length;
         int ps = aislesh.length;
         int[] pesosAisle = new int[ps];
@@ -41,7 +40,6 @@ public class Heuristica2 extends Heuristica {
                 }
                 pesosAisle[p] += ocupa;
             }   
-            System.out.println(pesosAisle);
         }
 
 
