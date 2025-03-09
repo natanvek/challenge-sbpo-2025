@@ -25,6 +25,9 @@ public abstract class ChallengeSolver {
         this.aisles = aisles;
         this.nItems = nItems;
         this.waveSizeLB = waveSizeLB;
+        System.out.println("constructor CS");
+
+        System.out.println("waveSizeUB: "+ waveSizeUB);
         this.waveSizeUB = waveSizeUB;
     }
     public abstract String getName();

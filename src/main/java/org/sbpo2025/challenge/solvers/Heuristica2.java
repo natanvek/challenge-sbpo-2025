@@ -1,6 +1,7 @@
 package org.sbpo2025.challenge.solvers;  // Paquete correcto
 
 import org.sbpo2025.challenge.ChallengeSolver;
+import org.sbpo2025.challenge.Heuristica;
 import org.sbpo2025.challenge.ChallengeSolution;
 
 import java.util.Arrays;
@@ -13,7 +14,7 @@ import java.util.HashSet;
 
 import org.apache.commons.lang3.time.StopWatch;
 
-public class Heuristica2 extends ChallengeSolver {
+public class Heuristica2 extends Heuristica {
     public Heuristica2(List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aisles, int nItems, int waveSizeLB, int waveSizeUB) {
         super(orders, aisles, nItems, waveSizeLB, waveSizeUB);
     }
@@ -25,44 +26,36 @@ public class Heuristica2 extends ChallengeSolver {
     
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {
-        int os = orders.size();
-        int ps = aisles.size();
-        int[] ps_copados = new int[ps];
-        int[] o_size = new int[os];
+        System.out.println("waveSizeUB2: " + waveSizeUB);
+        int os = ordersh.length;
+        int ps = aislesh.length;
+        int[] pesosAisle = new int[ps];
+
         
-        for(int o = 0; o < os; ++o) {
-            for (Map.Entry<Integer, Integer> entry : orders.get(o).entrySet()) 
-                o_size[o] += entry.getValue();
-            
-            if(o_size[o] > waveSizeUB) continue;
+        for(int o = 0; o < os; ++o) {          
+            if(ordersh[o].size > waveSizeUB) continue;
             for(int p = 0; p < ps; ++p) {
                 int ocupa = 0;
-                for (Map.Entry<Integer, Integer> entry : orders.get(o).entrySet()) {
-                    int cant = entry.getValue();
-                    int elem = entry.getKey();
-                    ocupa += Math.min(aisles.get(p).getOrDefault(elem, 0).intValue(), cant);
+                for (Map.Entry<Integer, Integer> entry : ordersh[o].items.entrySet()) {
+                    ocupa += Math.min(aislesh[p].items.getOrDefault(entry.getKey(), 0).intValue(), entry.getValue());
                 }
-                ps_copados[p] += ocupa;
-                // if(ocupa > o_size[o] * 0.50) ps_copados[p]++;
-                
+                pesosAisle[p] += ocupa;
             }   
+            System.out.println(pesosAisle);
         }
 
-        Integer[] indices_o = new Integer[os];
-        for (int i = 0; i < os; i++) indices_o[i] = i;
-        Arrays.sort(indices_o, (i1, i2) -> Integer.compare(o_size[i2], o_size[i1]));
-        
-        Integer[] indices_p = new Integer[ps];
-        for (int i = 0; i < ps; i++) indices_p[i] = i;
-        Arrays.sort(indices_p, (i1, i2) -> Integer.compare(ps_copados[i2], ps_copados[i1]));
+
+        Arrays.sort(ordersh, (o1, o2) -> Integer.compare(o2.size, o1.size));
+        Arrays.sort(aislesh, (a1, a2) -> Integer.compare(pesosAisle[a2.id], pesosAisle[a1.id]));
+
 
         Map<Integer, Integer> mapa_actual_ps = new HashMap<>();
         Set<Integer> rta_os = new HashSet<>();
         Set<Integer> rta_ps = new HashSet<>(), actual_ps = new HashSet<>();
         double rta_val = 0;
         for(int sol = 0; sol < ps; ++sol) {
-            actual_ps.add(indices_p[sol]);
-            for (Map.Entry<Integer, Integer> entry : aisles.get(indices_p[sol]).entrySet()) {
+            actual_ps.add(aislesh[sol].id);
+            for (Map.Entry<Integer, Integer> entry : aislesh[sol].items.entrySet()) {
                 int elem = entry.getKey(), cant = entry.getValue();
                 mapa_actual_ps.merge(elem, cant, Integer::sum);
             }
@@ -70,20 +63,10 @@ public class Heuristica2 extends ChallengeSolver {
             Integer mirta = 0;
             Set<Integer> actual_os = new HashSet<>();
             for(int o = 0; o < os; ++o) {
-                if(mirta + o_size[indices_o[o]] > waveSizeUB) continue;
-                
-                boolean anda = true;
-                for (Map.Entry<Integer, Integer> entry : orders.get(indices_o[o]).entrySet()) {
-                    int elem = entry.getKey(), cant = entry.getValue();
-                    if(copia_m.getOrDefault(elem, 0).intValue() < cant) anda = false;
+                if(mirta + ordersh[o].size <= waveSizeUB && tryFill(ordersh[o].items, copia_m)) {
+                    mirta += ordersh[o].size;
+                    actual_os.add(ordersh[o].id);
                 }
-                if(!anda) continue;
-                for (Map.Entry<Integer, Integer> entry : orders.get(indices_o[o]).entrySet()) {
-                    int elem = entry.getKey(), cant = entry.getValue();
-                    copia_m.put(elem, copia_m.get(elem) - cant);
-                }
-                mirta += o_size[indices_o[o]];
-                actual_os.add(indices_o[o]);
             }
             if(mirta >= waveSizeLB && (double) mirta / (sol + 1) > rta_val ) {
                 rta_val = (double)mirta / (sol + 1);
@@ -91,7 +74,6 @@ public class Heuristica2 extends ChallengeSolver {
                 rta_ps = new HashSet<Integer>(actual_ps); 
             }
         }
-
         return new ChallengeSolution(rta_os, rta_ps);
     }
 }

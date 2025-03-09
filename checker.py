@@ -37,6 +37,8 @@ class WaveOrderPicking:
     def read_output(self, output_file_path):
         with open(output_file_path, 'r') as file:
             lines = file.readlines()
+            if not lines:  # Verifica si la lista está vacía
+                raise ValueError("Probablemente te olvidaste de agregar la nueva heuristica a Challenge")
             num_orders = int(lines[0].strip())
             selected_orders = [int(lines[i + 1].strip()) for i in range(num_orders)]
             num_aisles = int(lines[num_orders + 1].strip())
@@ -80,6 +82,8 @@ class WaveOrderPicking:
         num_visited_aisles = len(visited_aisles)
 
         # Objective function: total units picked / number of visited aisles
+        if(num_visited_aisles == 0) : return 0.0
+        
         return total_units_picked / num_visited_aisles
 
 if __name__ == "__main__":

@@ -3,8 +3,6 @@ import org.sbpo2025.challenge.solvers.*;
 
 import org.apache.commons.lang3.time.StopWatch;
 
-import org.sbpo2025.challenge.solvers.Heuristica1;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -14,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 public class Challenge {
 
@@ -115,6 +114,7 @@ public class Challenge {
         // Start the stopwatch to track the running time
         StopWatch stopWatch = StopWatch.createStarted();
 
+
         if (args.length != 3) {
             System.out.println("Usage: java -jar target/ChallengeSBPO2025-1.0.jar <inputFilePath> <outputFilePath> <heuristicaName>");
             return;
@@ -124,11 +124,11 @@ public class Challenge {
         challenge.readInput(args[0]);
 
         ChallengeSolver[] solvers = new ChallengeSolver[] {
-            new Heuristica1(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
             new Heuristica2(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-            new Heuristica3(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-            new BF10(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB)
+            new BF10(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
+            new BF10yH2(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB)
         };
+        
         String solverName = args[2];
         
         for (ChallengeSolver solver : solvers) {

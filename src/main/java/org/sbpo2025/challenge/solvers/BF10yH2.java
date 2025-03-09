@@ -14,14 +14,14 @@ import java.util.HashSet;
 
 import org.apache.commons.lang3.time.StopWatch;
 
-public class BF10 extends Heuristica {
-    public BF10(List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aisles, int nItems, int waveSizeLB, int waveSizeUB) {
-        super(orders, aisles, nItems, waveSizeLB, waveSizeUB);
+public class BF10yH2 extends Heuristica {
+    public BF10yH2(List<Map<Integer, Integer>> ordersh, List<Map<Integer, Integer>> aislesh, int nItems, int waveSizeLB, int waveSizeUB) {
+        super(ordersh, aislesh, nItems, waveSizeLB, waveSizeUB);
     }
 
     @Override
     public String getName() {
-        return "BF10";  // Nombre propio de la subclase
+        return "BF10yH2";  // Nombre propio de la subclase
     }
 
     @Override
@@ -51,24 +51,28 @@ public class BF10 extends Heuristica {
 
         int tomo_pasillos = 5; // Conjunto {0,1,2,3,4,5,6,7,8,9}
         int totalSubsets = 1 << Math.min(tomo_pasillos, ps); // 2^n subconjuntos
-
         
         for (int mask = 0; mask < totalSubsets; mask++) {
             Cart actual = new Cart();
             for (int i = 0; i < tomo_pasillos; i++) 
                 if ((mask & (1 << i)) != 0) actual.addAisle(i);
+            
+            for (int i = tomo_pasillos-1; i < ps; i++) {
+                for (int j = tomo_pasillos; j < i+1; j++)
+                    actual.addAisle(j);
 
-            actual.nItems = 0;
-            for(int o = 0; o < os; ++o) {
-                if(actual.nItems + ordersh[o].size <= waveSizeUB && tryFill(ordersh[o].items, actual.available)) {
-                    actual.nItems += ordersh[o].size;
-                    actual.my_orders.add(ordersh[o].id);
+                actual.nItems = 0;
+                for(int o = 0; o < os; ++o) {
+                    if(actual.nItems + ordersh[o].size <= waveSizeUB && tryFill(ordersh[o].items, actual.available)) {
+                        actual.nItems += ordersh[o].size;
+                        actual.my_orders.add(ordersh[o].id);
+                    }
                 }
-            }
-            if(actual.nItems >= waveSizeLB && (double) actual.nItems / actual.my_aisles.size() > rta_val ) {
-                rta_val = (double)actual.nItems / actual.my_aisles.size();
-                rta_os = new HashSet<Integer>(actual.my_orders); 
-                rta_ps = new HashSet<Integer>(actual.my_aisles); 
+                if(actual.nItems >= waveSizeLB && (double) actual.nItems / actual.my_aisles.size() > rta_val ) {
+                    rta_val = (double)actual.nItems / actual.my_aisles.size();
+                    rta_os = new HashSet<Integer>(actual.my_orders); 
+                    rta_ps = new HashSet<Integer>(actual.my_aisles); 
+                }
             }
 
         }
