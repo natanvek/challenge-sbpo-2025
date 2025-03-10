@@ -1,0 +1,27 @@
+algo que paso es que shuffle orders no mostro mucha importancia en las distintas implementaciones de H2 es decir que cualquier orden da mas o menos igual
+Ademas se vio que el ordenamiento de mayor a menor por tamaño funciona muy bien
+
+otra opcion de ordenamiento es ordenar de mayor a menor o de menor a mayor por cantidad diferente de items en order
+
+lo mismo se puede verificar ordenamientos de mayor a menor o menor a mayor en pasillos por cantidad diferentes de items
+
+algo que observo es que BF10 sin H2 funciona sorprendentemente bien en muchos casos, esto puede implicar que muchas soluciones tienen menos de 10 pasillos
+
+lo más probable es que en H2 no haga falta recorrer hasta el final, no creo que tome tantos pasillos, analizar que pasa si recorro menos pasillos
+
+estaria bueno poder agregar podas cosa de ver una lista de pasillos y en O(barato) determinar si vale o no la pena analizarlo 
+por ejemplo usando la cantidad de pasillos en relacion a las restricciones waveSizeUB y waveSizeLB
+
+otra idea que se me ocurre es correr H2 y analizar cuantos pasillos tiene la respuesta que encontró y solo buscar respuestas que tengan aproximadamente la misma cantidad de pasillos
+
+n / p = rta => n / rta = p y además lb <= n <= ub => lb <= rta . p <= ub => lb / rta <= p <= ub / rta
+de esta manera probamos que tenemos una cota superior e inferior para el valor de p en todo momento, además p es entero asique podemos redondear para arriba lb / rta y para abajo ub / rta
+
+por otro lado dada una rta conseguida, se puede ver que cada pasillo está aportando en promedio rta elementos, se puede implementar alguna heurisitca aprovechando este hecho
+
+algo que se puede hacer que suena útil es usar el peso de los aisles a modo de probabilidad normalizado o algo asi y tomar muestras de aisles con esa proba
+
+una buena opcion puede ser agarrar cada order y con cplex buscar cuales son los pasillos optimos, y sumarles pesos (como en h2) a los optimos de esa order, analizando solo orders que tengan un tamaño copado, las orders chicas no sirven. 
+esto definiria un orden muhco mas optimo
+
+otra opcion siguiendo con la linea del cplex para cada order es agarro el mas grande, le busco los mejores pasillos, los meto en al respuesta, agarro el segundo le resto los available, le ejecuto cp-lex lo meto en la rta y asi

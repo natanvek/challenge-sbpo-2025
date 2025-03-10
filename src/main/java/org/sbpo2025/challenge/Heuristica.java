@@ -41,27 +41,34 @@ public abstract class Heuristica extends ChallengeSolver {
 
     protected Order[] ordersh;
     protected Aisle[] aislesh;
-
+    protected int os;
+    protected int as;
 
     protected class Cart {
         public Set<Integer> my_orders = new HashSet<>();
         public Set<Integer> my_aisles = new HashSet<>();;
         public Map<Integer, Integer> available = new HashMap<>();
-        public int nItems = 0;
+        public int cantItems = 0;
 
         public Cart() {}
-        private boolean compare(Cart otro) {
-            if(otro.my_aisles.size() == 0) return false;
-            if(my_aisles.size() == 0) return true;
 
-            return ((double) otro.nItems / otro.my_aisles.size() > (double) nItems / my_aisles.size()); 
+        public double getValue() {
+            if(my_aisles.size() == 0) return 0.0;
+            return (double) cantItems / my_aisles.size();
+        }
+
+        public int getTope() {
+            if (my_aisles.size() == 0) return as;
+            return Math.min((int) Math.floor(waveSizeUB / getValue()), as);
         }
 
         public void update(Cart otro) {
-            if(compare(otro)){
-                my_orders.clear(); my_orders.addAll(otro.my_orders);
-                my_aisles.clear(); my_orders.addAll(otro.my_aisles);
-                nItems = otro.nItems;
+            if (otro.getValue() > getValue()) {
+                my_orders.clear();
+                my_orders.addAll(otro.my_orders);
+                my_aisles.clear();
+                my_aisles.addAll(otro.my_aisles);
+                cantItems = otro.cantItems;
             }
         }
 
@@ -70,57 +77,100 @@ public abstract class Heuristica extends ChallengeSolver {
             for (Map.Entry<Integer, Integer> entry : aislesh[i].items.entrySet()) {
                 int elem = entry.getKey(), cant = entry.getValue();
                 available.merge(elem, cant, Integer::sum);
-            }  
+            }
         }
 
-
-        public boolean tryFill(int order) {
-            for (Map.Entry<Integer, Integer> entry : ordersh[order].items.entrySet()) {
+        public boolean removeRequestIfPossible(Map<Integer, Integer> m) {
+            for (Map.Entry<Integer, Integer> entry : m.entrySet()) {
                 int elem = entry.getKey(), cant = entry.getValue();
-                if(available.getOrDefault(elem, 0).intValue() < cant) return false;
+                if (available.getOrDefault(elem, 0).intValue() < cant)
+                    return false;
             }
-            for (Map.Entry<Integer, Integer> entry : ordersh[order].items.entrySet()) {
+            for (Map.Entry<Integer, Integer> entry : m.entrySet()) {
                 int elem = entry.getKey(), cant = entry.getValue();
-                available.put(elem, available.get(elem) - cant);
+                available.computeIfPresent(elem, (k, tengo) -> tengo - cant);
             }
             return true;
         }
+
+        public void fill() {
+            for (int o = 0; o < os; ++o) {
+                if (cantItems + ordersh[o].size <= waveSizeUB
+                        && removeRequestIfPossible(ordersh[o].items)) {
+                    cantItems += ordersh[o].size;
+                    my_orders.add(ordersh[o].id);
+                }
+            }
+        }
     }
 
-    // protected record Order(int id, Map<Integer, Integer> items, int size) {}
-
-    public Heuristica(List<Map<Integer, Integer>> _orders, List<Map<Integer, Integer>> _aisles, int nItems, int waveSizeLB, int waveSizeUB) {
+    public Heuristica(List<Map<Integer, Integer>> _orders, List<Map<Integer, Integer>> _aisles, int nItems,
+            int waveSizeLB, int waveSizeUB) {
         super(_orders, _aisles, nItems, waveSizeLB, waveSizeUB);
         ordersh = new Order[_orders.size()];
-        for(int o = 0; o < _orders.size(); o++) {
+        for (int o = 0; o < _orders.size(); o++) {
             ordersh[o] = new Order(o, _orders.get(o), 0);
             for (Map.Entry<Integer, Integer> entry : _orders.get(o).entrySet()) {
                 ordersh[o].size += entry.getValue();
-            }     
+            }
         }
 
         aislesh = new Aisle[_aisles.size()];
-        for(int a = 0; a < _aisles.size(); a++) {
+        for (int a = 0; a < _aisles.size(); a++) {
             aislesh[a] = new Aisle(a, _aisles.get(a), 0);
             for (Map.Entry<Integer, Integer> entry : _aisles.get(a).entrySet()) {
                 aislesh[a].size += entry.getValue();
-            }     
+            }
         }
+        as = aisles.size();
+        os = orders.size();
 
     }
 
+    protected Cart pasada(Order[] ordersh, Aisle[] aislesh, int tope) {
+        Cart rta = new Cart();
+        for (int sol = 0; sol < tope; ++sol) {
+            Cart actual = new Cart();
+            for (int p = 0; p <= sol; ++p)
+                actual.addAisle(p);
+
+            for (int o = 0; o < os; ++o) {
+                if (actual.cantItems + ordersh[o].size <= waveSizeUB
+                        && actual.removeRequestIfPossible(ordersh[o].items)) {
+                    actual.cantItems += ordersh[o].size;
+                    actual.my_orders.add(ordersh[o].id);
+                }
+            }
+
+            for (int p = sol; p >= 0; --p) {
+                if (actual.my_aisles.contains(aislesh[p].id) && actual.removeRequestIfPossible(aislesh[p].items)) {
+                    actual.my_aisles.remove(aislesh[p].id);
+                }
+            }
+
+            if (actual.cantItems >= waveSizeLB)
+                rta.update(actual);
+
+            tope = Math.min(tope, rta.getTope());
+            
+
+        }
+        return rta;
+    }
 
     protected boolean tryFill(Map<Integer, Integer> toFill, Map<Integer, Integer> available) {
         for (Map.Entry<Integer, Integer> entry : toFill.entrySet()) {
             int elem = entry.getKey(), cant = entry.getValue();
-            if(available.getOrDefault(elem, 0).intValue() < cant) return false;
+            if (available.getOrDefault(elem, 0).intValue() < cant)
+                return false;
         }
         for (Map.Entry<Integer, Integer> entry : toFill.entrySet()) {
             int elem = entry.getKey(), cant = entry.getValue();
-            available.put(elem, available.get(elem) - cant);
+            available.computeIfPresent(elem, (k, tengo) -> tengo - cant);
         }
         return true;
     }
+
     /*
      * Get the remaining time in seconds
      */
@@ -189,7 +239,8 @@ public abstract class Heuristica extends ChallengeSolver {
         int numVisitedAisles = visitedAisles.size();
 
         // Objective function: total units picked / number of visited aisles
-        if (numVisitedAisles == 0) return 0;
+        if (numVisitedAisles == 0)
+            return 0;
 
         return (double) totalUnitsPicked / numVisitedAisles;
     }

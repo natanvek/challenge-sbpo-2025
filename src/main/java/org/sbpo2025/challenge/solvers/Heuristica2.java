@@ -26,14 +26,12 @@ public class Heuristica2 extends Heuristica {
     
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {
-        int os = ordersh.length;
-        int ps = aislesh.length;
-        int[] pesosAisle = new int[ps];
+        int[] pesosAisle = new int[as];
 
         
         for(int o = 0; o < os; ++o) {          
             if(ordersh[o].size > waveSizeUB) continue;
-            for(int p = 0; p < ps; ++p) {
+            for(int p = 0; p < as; ++p) {
                 int ocupa = 0;
                 for (Map.Entry<Integer, Integer> entry : ordersh[o].items.entrySet()) {
                     ocupa += Math.min(aislesh[p].items.getOrDefault(entry.getKey(), 0).intValue(), entry.getValue());
@@ -45,33 +43,12 @@ public class Heuristica2 extends Heuristica {
 
         Arrays.sort(ordersh, (o1, o2) -> Integer.compare(o2.size, o1.size));
         Arrays.sort(aislesh, (a1, a2) -> Integer.compare(pesosAisle[a2.id], pesosAisle[a1.id]));
+        Cart rta = pasada(ordersh, aislesh, as);
 
+        Arrays.sort(aislesh, (a1, a2) -> Integer.compare(a2.size, a1.size));
 
-        Map<Integer, Integer> mapa_actual_ps = new HashMap<>();
-        Set<Integer> rta_os = new HashSet<>();
-        Set<Integer> rta_ps = new HashSet<>(), actual_ps = new HashSet<>();
-        double rta_val = 0;
-        for(int sol = 0; sol < ps; ++sol) {
-            actual_ps.add(aislesh[sol].id);
-            for (Map.Entry<Integer, Integer> entry : aislesh[sol].items.entrySet()) {
-                int elem = entry.getKey(), cant = entry.getValue();
-                mapa_actual_ps.merge(elem, cant, Integer::sum);
-            }
-            Map<Integer, Integer> copia_m = new HashMap<>(mapa_actual_ps);
-            Integer mirta = 0;
-            Set<Integer> actual_os = new HashSet<>();
-            for(int o = 0; o < os; ++o) {
-                if(mirta + ordersh[o].size <= waveSizeUB && tryFill(ordersh[o].items, copia_m)) {
-                    mirta += ordersh[o].size;
-                    actual_os.add(ordersh[o].id);
-                }
-            }
-            if(mirta >= waveSizeLB && (double) mirta / (sol + 1) > rta_val ) {
-                rta_val = (double)mirta / (sol + 1);
-                rta_os = new HashSet<Integer>(actual_os); 
-                rta_ps = new HashSet<Integer>(actual_ps); 
-            }
-        }
-        return new ChallengeSolution(rta_os, rta_ps);
+        rta.update(pasada(ordersh, aislesh, as));
+
+        return new ChallengeSolution(rta.my_orders, rta.my_aisles);
     }
 }

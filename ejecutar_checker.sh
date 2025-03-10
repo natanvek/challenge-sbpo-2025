@@ -10,48 +10,28 @@ OUTPUT_DIR="$SCRIPT_DIR/output"
 BASE_DIR="$(pwd)"
 
 
-if [ "$#" -eq 0 ]; then
-    # Si no se pasaron heurísticas, se asigna un valor por defecto
-    heuristics=("Heuristica2" "Heuristica3")  # Valor por defecto
-else
-    # Si hay más de tres argumentos, tomamos los que siguen desde el cuarto
+
+if [ "$#" -gt 0 ]; then
     heuristics=("${@:1}")
+    set -o pipefail
+    python3 ./run_challenge.py "${BASE_DIR}" "${DATASET_DIR}" "${OUTPUT_DIR}" "${heuristics[@]}" 2>&1 | tee /dev/stderr | grep -iq "error" && exit 1
 fi
 
-echo "${heuristics[@]}"
-
-set -o pipefail
-python3 ./run_challenge.py "${BASE_DIR}" "${DATASET_DIR}" "${OUTPUT_DIR}" "${heuristics[@]}" 2>&1 | tee /dev/stderr | grep -iq "error" && exit 1
 
 # Bucle para ejecutar las instancias
 for instance in "$DATASET_DIR"/*.txt; do
     instance=$(basename "$instance")
     echo "-------------------------------------"
-    echo "Running $instance\n"
+    echo -e "\033[38;5;213mRunning $instance\033[0m"
 
     for solver_dir in "$OUTPUT_DIR"/*/; do 
-        echo "---> Results for $(basename "$solver_dir"):"
-        python3 checker.py "$DATASET_DIR/$instance" "$solver_dir/$instance"
         echo ""
+        echo -e "---> \033[38;5;120mResults for $(basename "$solver_dir")\033[0m:"
+        python3 checker.py "$DATASET_DIR/$instance" "$solver_dir/$instance"
     done
 
     echo "-------------------------------------"
     echo ""
 done
-
-# for solver_dir in "$OUTPUT_DIR"/*/; do
-#     echo "-------------------------------------"
-#     echo "Running $(basename "$solver_dir")"
-#     echo "-------------------------------------"
-#     for instance in "$solver_dir"*.txt; do
-#         instance=$(basename "$instance")
-#         echo "-------------------------------------"
-#         echo "Running $instance"
-#         echo "-------------------------------------"
-#         # Ejecuta el checker para cada archivo
-#         python checker.py "$DATASET_DIR/$instance" "$solver_dir/$instance"
-#         echo ""
-#     done
-# done
 
 

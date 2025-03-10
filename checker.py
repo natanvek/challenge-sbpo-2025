@@ -34,6 +34,9 @@ class WaveOrderPicking:
             self.wave_size_lb = int(bounds[0])
             self.wave_size_ub = int(bounds[1])
 
+            print("LB = " + str(self.wave_size_lb))
+            print("UB = " + str(self.wave_size_ub))
+
     def read_output(self, output_file_path):
         with open(output_file_path, 'r') as file:
             lines = file.readlines()
@@ -99,6 +102,8 @@ if __name__ == "__main__":
     is_feasible = wave_order_picking.is_solution_feasible(selected_orders, visited_aisles)
     objective_value = wave_order_picking.compute_objective_function(selected_orders, visited_aisles)
 
-    print("Is solution feasible:", is_feasible)
     if is_feasible:
-        print("Objective function value:", objective_value)
+        print("Objective function value:", '\033[38;5;226m' + str(objective_value) + "\033[0m")
+        print("Aisles in answer: ", '\033[38;5;111m' + str(len(visited_aisles)) + "\033[0m")
+    else :
+        print("\033[38;5;196mInfeasible Solution\033[0m")
