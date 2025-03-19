@@ -1,14 +1,10 @@
 package org.sbpo2025.challenge;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.sbpo2025.challenge.Heuristica.Cart;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.HashSet;
 
 public abstract class Heuristica extends ChallengeSolver {
     private final long MAX_RUNTIME = 600000; // milliseconds; 10 minutes
@@ -39,8 +35,12 @@ public abstract class Heuristica extends ChallengeSolver {
         }
     }
 
-    protected Order[] ordersh;
-    protected Aisle[] aislesh;
+    protected Order[] orders;
+    protected Aisle[] aisles;
+    protected Aisle[] idToAisle;
+
+    protected Aisle[] aisles_sorted;
+
     protected int os;
     protected int as;
 
@@ -52,32 +52,59 @@ public abstract class Heuristica extends ChallengeSolver {
 
         public Cart() {}
 
+        public void copy(Cart otro) {
+            my_orders.clear();
+            my_orders.addAll(otro.my_orders);
+            my_aisles.clear();
+            my_aisles.addAll(otro.my_aisles);
+            available.clear();
+            available.putAll(otro.available);
+            cantItems = otro.cantItems;
+        }
+
+        public Cart(Cart otro) {
+            copy(otro);
+        }
+
         public double getValue() {
-            if(my_aisles.size() == 0) return 0.0;
+            if (my_aisles.size() == 0)
+                return 0.0;
             return (double) cantItems / my_aisles.size();
         }
 
         public int getTope() {
-            if (my_aisles.size() == 0) return as;
-            return Math.min((int) Math.floor(waveSizeUB / getValue()), as);
+            if (getValue() < 1e-5)
+                return as - 1;
+            return Math.min((int) Math.floor(waveSizeUB / getValue()), as - 1);
         }
 
-        public void update(Cart otro) {
+        public boolean update(Cart otro) {
             if (otro.getValue() > getValue()) {
-                my_orders.clear();
-                my_orders.addAll(otro.my_orders);
-                my_aisles.clear();
-                my_aisles.addAll(otro.my_aisles);
-                cantItems = otro.cantItems;
+                copy(otro);
+                return true;
             }
+
+            return false;
         }
 
-        public void addAisle(int i) {
-            my_aisles.add(aislesh[i].id);
-            for (Map.Entry<Integer, Integer> entry : aislesh[i].items.entrySet()) {
-                int elem = entry.getKey(), cant = entry.getValue();
-                available.merge(elem, cant, Integer::sum);
-            }
+
+        public void addAisle(Aisle a) {
+            my_aisles.add(a.id);
+            for (Map.Entry<Integer, Integer> entry : a.items.entrySet())
+                available.merge(entry.getKey(), entry.getValue(), Integer::sum);
+        }
+
+        public void addAisle(int posInAislesh) {
+            addAisle(aisles[posInAislesh]);
+        }
+
+        public void addOrder(Order o) {
+            cantItems += o.size;
+            my_orders.add(o.id);
+        }
+
+        public void addOrder(int posInOrdersh) {
+            addOrder(orders[posInOrdersh]);
         }
 
         public boolean removeRequestIfPossible(Map<Integer, Integer> m) {
@@ -88,87 +115,103 @@ public abstract class Heuristica extends ChallengeSolver {
             }
             for (Map.Entry<Integer, Integer> entry : m.entrySet()) {
                 int elem = entry.getKey(), cant = entry.getValue();
-                available.computeIfPresent(elem, (k, tengo) -> tengo - cant);
+                available.compute(elem, (k, tengo) -> tengo - cant);
             }
             return true;
         }
 
-        public void fill() {
-            for (int o = 0; o < os; ++o) {
-                if (cantItems + ordersh[o].size <= waveSizeUB
-                        && removeRequestIfPossible(ordersh[o].items)) {
-                    cantItems += ordersh[o].size;
-                    my_orders.add(ordersh[o].id);
-                }
+
+        public int aisleCount(){
+            return my_aisles.size();
+        }
+
+        public boolean hasAisle(Aisle a){
+            return my_aisles.contains(a.id);
+        }
+
+        public void resetOrders(){
+            my_orders.clear();
+            cantItems = 0;
+            available.clear();
+            for(int a : my_aisles) 
+                addAisle(idToAisle[a]);
+        }
+
+        public void fill() {            
+            for (Order o : orders) {
+                if (cantItems + o.size > waveSizeUB)
+                    continue;
+
+                if (removeRequestIfPossible(o.items))
+                    addOrder(o);
             }
+        }
+
+        public void removeRedundantAisles() {
+            for (Aisle p : aisles_sorted) 
+                if (my_aisles.contains(p.id) && removeRequestIfPossible(p.items))
+                    my_aisles.remove(p.id);   
+    
         }
     }
 
     public Heuristica(List<Map<Integer, Integer>> _orders, List<Map<Integer, Integer>> _aisles, int nItems,
             int waveSizeLB, int waveSizeUB) {
         super(_orders, _aisles, nItems, waveSizeLB, waveSizeUB);
-        ordersh = new Order[_orders.size()];
-        for (int o = 0; o < _orders.size(); o++) {
-            ordersh[o] = new Order(o, _orders.get(o), 0);
-            for (Map.Entry<Integer, Integer> entry : _orders.get(o).entrySet()) {
-                ordersh[o].size += entry.getValue();
-            }
+
+        aisles = new Aisle[_aisles.size()];
+        
+
+        for (int a = 0; a < _aisles.size(); a++) {
+            aisles[a] = new Aisle(a, _aisles.get(a), 0);
+            for (Map.Entry<Integer, Integer> entry : _aisles.get(a).entrySet())
+                aisles[a].size += entry.getValue();
         }
 
-        aislesh = new Aisle[_aisles.size()];
-        for (int a = 0; a < _aisles.size(); a++) {
-            aislesh[a] = new Aisle(a, _aisles.get(a), 0);
-            for (Map.Entry<Integer, Integer> entry : _aisles.get(a).entrySet()) {
-                aislesh[a].size += entry.getValue();
+        aisles_sorted = Arrays.copyOf(aisles, aisles.length);
+        idToAisle = Arrays.copyOf(aisles, aisles.length);
+        Arrays.sort(aisles_sorted, (a1, a2) -> Integer.compare(a1.size, a2.size));
+
+        List<Order> ordersh_aux = new ArrayList<>();
+        for (int o = 0; o < _orders.size(); o++) {
+            int t = 0;
+            // boolean anda = true;
+            for (Map.Entry<Integer, Integer> entry : _orders.get(o).entrySet()) {
+                Integer elem = entry.getKey();
+                Integer cant = entry.getValue();
+                t += cant;
+                // if(mapa_pasillos.getOrDefault(elem, 0) < cant )
+                // anda = false;
             }
+            // if(t <= waveSizeUB && anda)
+            ordersh_aux.add(new Order(o, _orders.get(o), t));
         }
-        as = aisles.size();
-        os = orders.size();
+
+        orders = ordersh_aux.toArray(new Order[0]);
+
+        as = aisles.length;
+        os = orders.length;
 
     }
 
-    protected Cart pasada(Order[] ordersh, Aisle[] aislesh, int tope) {
+    protected Cart pasada(int tope) {
         Cart rta = new Cart();
-        for (int sol = 0; sol < tope; ++sol) {
+        for (int sol = 0; sol <= tope; ++sol) {
             Cart actual = new Cart();
             for (int p = 0; p <= sol; ++p)
                 actual.addAisle(p);
 
-            for (int o = 0; o < os; ++o) {
-                if (actual.cantItems + ordersh[o].size <= waveSizeUB
-                        && actual.removeRequestIfPossible(ordersh[o].items)) {
-                    actual.cantItems += ordersh[o].size;
-                    actual.my_orders.add(ordersh[o].id);
-                }
-            }
+            actual.fill();
 
-            for (int p = sol; p >= 0; --p) {
-                if (actual.my_aisles.contains(aislesh[p].id) && actual.removeRequestIfPossible(aislesh[p].items)) {
-                    actual.my_aisles.remove(aislesh[p].id);
-                }
-            }
+            actual.removeRedundantAisles();
 
             if (actual.cantItems >= waveSizeLB)
                 rta.update(actual);
 
             tope = Math.min(tope, rta.getTope());
-            
 
         }
         return rta;
-    }
-
-    protected boolean tryFill(Map<Integer, Integer> toFill, Map<Integer, Integer> available) {
-        for (Map.Entry<Integer, Integer> entry : toFill.entrySet()) {
-            int elem = entry.getKey(), cant = entry.getValue();
-            if (available.getOrDefault(elem, 0).intValue() < cant)
-                return false;
-        }
-        for (Map.Entry<Integer, Integer> entry : toFill.entrySet()) {
-            int elem = entry.getKey(), cant = entry.getValue();
-            available.computeIfPresent(elem, (k, tengo) -> tengo - cant);
-        }
-        return true;
     }
 
     /*
@@ -192,14 +235,14 @@ public abstract class Heuristica extends ChallengeSolver {
 
         // Calculate total units picked
         for (int order : selectedOrders) {
-            for (Map.Entry<Integer, Integer> entry : ordersh[order].items.entrySet()) {
+            for (Map.Entry<Integer, Integer> entry : orders[order].items.entrySet()) {
                 totalUnitsPicked[entry.getKey()] += entry.getValue();
             }
         }
 
         // Calculate total units available
         for (int aisle : visitedAisles) {
-            for (Map.Entry<Integer, Integer> entry : aislesh[aisle].items.entrySet()) {
+            for (Map.Entry<Integer, Integer> entry : aisles[aisle].items.entrySet()) {
                 totalUnitsAvailable[entry.getKey()] += entry.getValue();
             }
         }
@@ -230,7 +273,7 @@ public abstract class Heuristica extends ChallengeSolver {
 
         // Calculate total units picked
         for (int order : selectedOrders) {
-            totalUnitsPicked += ordersh[order].items.values().stream()
+            totalUnitsPicked += orders[order].items.values().stream()
                     .mapToInt(Integer::intValue)
                     .sum();
         }

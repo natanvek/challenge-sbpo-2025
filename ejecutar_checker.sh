@@ -4,7 +4,13 @@
 SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 
 # Directorios relativos
+
 DATASET_DIR="$SCRIPT_DIR/datasets/a"
+
+if [[ " $* " == *" -toy "* ]]; then
+    DATASET_DIR="$SCRIPT_DIR/datasets/toy"
+    shift
+fi
 OUTPUT_DIR="$SCRIPT_DIR/output"
 
 BASE_DIR="$(pwd)"

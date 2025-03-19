@@ -31,28 +31,28 @@ public class H2yShuffleOrders extends Heuristica {
 
         
         for(int o = 0; o < os; ++o) {          
-            if(ordersh[o].size > waveSizeUB) continue;
+            if(orders[o].size > waveSizeUB) continue;
             for(int p = 0; p < as; ++p) {
                 int ocupa = 0;
-                for (Map.Entry<Integer, Integer> entry : ordersh[o].items.entrySet()) {
-                    ocupa += Math.min(aislesh[p].items.getOrDefault(entry.getKey(), 0).intValue(), entry.getValue());
+                for (Map.Entry<Integer, Integer> entry : orders[o].items.entrySet()) {
+                    ocupa += Math.min(aisles[p].items.getOrDefault(entry.getKey(), 0).intValue(), entry.getValue());
                 }
                 pesosAisle[p] += ocupa;
             }   
         }
 
 
-        Arrays.sort(ordersh, (o1, o2) -> Integer.compare(o2.size, o1.size));
-        Arrays.sort(aislesh, (a1, a2) -> Integer.compare(pesosAisle[a2.id], pesosAisle[a1.id]));
+        Arrays.sort(orders, (o1, o2) -> Integer.compare(o2.size, o1.size));
+        Arrays.sort(aisles, (a1, a2) -> Integer.compare(pesosAisle[a2.id], pesosAisle[a1.id]));
 
 
         Cart rta = new Cart();
 
         for(int it = 0; it < 50; ++it) {
             System.out.println("iteracion "+it);
-            List<Order> list = Arrays.asList(ordersh);  // Convertir el array a lista
+            List<Order> list = Arrays.asList(orders);  // Convertir el array a lista
             Collections.shuffle(list);  // Shuffle la lista
-            ordersh = list.toArray(new Order[0]);
+            orders = list.toArray(new Order[0]);
 
             for(int sol = 0; sol < as; ++sol) {
                 Cart actual = new Cart();
@@ -60,15 +60,15 @@ public class H2yShuffleOrders extends Heuristica {
                     actual.addAisle(p);
                 
                 for(int o = 0; o < os; ++o) {
-                    if(actual.cantItems + ordersh[o].size <= waveSizeUB && actual.removeRequestIfPossible(ordersh[o].items)) {
-                        actual.cantItems += ordersh[o].size;
-                        actual.my_orders.add(ordersh[o].id);
+                    if(actual.cantItems + orders[o].size <= waveSizeUB && actual.removeRequestIfPossible(orders[o].items)) {
+                        actual.cantItems += orders[o].size;
+                        actual.my_orders.add(orders[o].id);
                     }
                 }
     
                 for(int p = sol; p >= 0; --p) {
-                    if(actual.my_aisles.contains(aislesh[p].id) && actual.removeRequestIfPossible(aislesh[p].items)) {
-                        actual.my_aisles.remove(aislesh[p].id);
+                    if(actual.my_aisles.contains(aisles[p].id) && actual.removeRequestIfPossible(aisles[p].items)) {
+                        actual.my_aisles.remove(aisles[p].id);
                     }
                 }
         

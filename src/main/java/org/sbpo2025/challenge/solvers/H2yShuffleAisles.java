@@ -31,34 +31,34 @@ public class H2yShuffleAisles extends Heuristica {
 
         
         for(int o = 0; o < os; ++o) {          
-            if(ordersh[o].size > waveSizeUB) continue;
+            if(orders[o].size > waveSizeUB) continue;
             for(int p = 0; p < as; ++p) {
                 int ocupa = 0;
-                for (Map.Entry<Integer, Integer> entry : ordersh[o].items.entrySet()) {
-                    ocupa += Math.min(aislesh[p].items.getOrDefault(entry.getKey(), 0).intValue(), entry.getValue());
+                for (Map.Entry<Integer, Integer> entry : orders[o].items.entrySet()) {
+                    ocupa += Math.min(aisles[p].items.getOrDefault(entry.getKey(), 0).intValue(), entry.getValue());
                 }
                 pesosAisle[p] += ocupa;
             }   
         }
 
 
-        Arrays.sort(ordersh, (o1, o2) -> Integer.compare(o2.size, o1.size));
-        Arrays.sort(aislesh, (a1, a2) -> Integer.compare(pesosAisle[a2.id], pesosAisle[a1.id]));
-        Cart rtaH2 = pasada(ordersh, aislesh, as);
+        Arrays.sort(orders, (o1, o2) -> Integer.compare(o2.size, o1.size));
+        Arrays.sort(aisles, (a1, a2) -> Integer.compare(pesosAisle[a2.id], pesosAisle[a1.id]));
+        Cart rtaH2 = pasada(as);
 
-        Arrays.sort(aislesh, (a1, a2) -> Integer.compare(a2.size, a1.size));
+        Arrays.sort(aisles, (a1, a2) -> Integer.compare(a2.size, a1.size));
 
-        rtaH2.update(pasada(ordersh, aislesh, as));
+        rtaH2.update(pasada(as));
 
         int tope = rtaH2.getTope();
 
         Cart rta = new Cart();
         for(int it = 0; it < 200; ++it) {
-            List<Aisle> list = Arrays.asList(aislesh);  // Convertir el array a lista
+            List<Aisle> list = Arrays.asList(aisles);  // Convertir el array a lista
             Collections.shuffle(list);  // Shuffle la lista
-            aislesh = list.toArray(new Aisle[0]);
+            aisles = list.toArray(new Aisle[0]);
 
-            rta.update(pasada(ordersh, aislesh, tope));
+            rta.update(pasada(tope));
             tope = Math.min(tope, rta.getTope());
         }
 
