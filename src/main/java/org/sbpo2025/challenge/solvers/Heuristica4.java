@@ -2,24 +2,69 @@ package org.sbpo2025.challenge.solvers; // Paquete correcto
 
 import org.sbpo2025.challenge.ChallengeSolver;
 import org.sbpo2025.challenge.ChallengeSolution;
-import org.sbpo2025.challenge.solvers.Elem;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 
 import org.apache.commons.lang3.time.StopWatch;
 
-public class Heuristica4 extends ChallengeSolver {
-    public Heuristica4(List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aisles, int nItems,
+public interface Heuristica4 {
+class Aisle {
+    public int aisleIdx;
+    public double delta;
+    public Map<Integer, Integer> orderElems;
+    
+    Aisle(int aisleIdx, double delta, Map<Integer, Integer> orderElems) {
+        this.aisleIdx = aisleIdx;
+        this.delta = delta;
+        this.orderElems = orderElems;
+    };
+}
+
+class Order {
+    public boolean valid;
+    public int orderIdx;
+    public double delta;
+    public int nElems;
+    public Set<Aisle> aisles;
+
+    Order(boolean valid, int orderIdx, double delta, int nElems, Set<Aisle> aisles) {
+        this.valid = valid;
+        this.orderIdx = orderIdx;
+        this.delta = delta;
+        this.nElems = nElems;
+        this.aisles = aisles;
+    }
+
+    Set<Integer> aisleIdxs() {
+        Set<Integer> idxs = new HashSet<>();
+        for (Aisle aisle : aisles) {
+            idxs.add(aisle.aisleIdx);
+        }
+        return idxs;
+    }
+
+    int intersectingAislesCount(Set<Integer>  idxs) {
+        Set<Integer> ownIdxs = aisleIdxs();
+        ownIdxs.retainAll(idxs);
+        return ownIdxs.size();
+    }
+
+    void replace(Order other) {
+        this.valid = other.valid;
+        this.orderIdx = other.orderIdx;
+        this.delta = other.delta;
+        this.nElems = other.nElems;
+        this.aisles = other.aisles; // shallow
+    }
+}
+public class Solver extends ChallengeSolver {
+    public Solver(List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aisles, int nItems,
             int waveSizeLB, int waveSizeUB) {
         super(orders, aisles, nItems, waveSizeLB, waveSizeUB);
     }
@@ -29,7 +74,7 @@ public class Heuristica4 extends ChallengeSolver {
         return "Heuristica4";
     }
 
-    private boolean takeOrder(List<Map<Integer, Integer>> aislesState /* mutable */, Elem.Order order) {
+    private boolean takeOrder(List<Map<Integer, Integer>> aislesState /* mutable */, Order order) {
         Map<Integer, Integer> orderMap = orders.get(order.orderIdx);
         // check es valida
         List<Map<Integer, Integer>> aislesStateCopy = new ArrayList<>(aislesState.size());
@@ -40,7 +85,7 @@ public class Heuristica4 extends ChallengeSolver {
         for (Map.Entry<Integer, Integer> entry : orderMap.entrySet()) {
             int elem = entry.getKey();
             int amount = entry.getValue();
-            for (Elem.Aisle aisle : order.aisles) {
+            for (Aisle aisle : order.aisles) {
                 Map<Integer, Integer> aisleMap = aislesStateCopy.get(aisle.aisleIdx);
                 int aisleAmount = aisleMap.getOrDefault(elem, 0);
                 int take = Math.min(aisleAmount, amount);
@@ -63,7 +108,7 @@ public class Heuristica4 extends ChallengeSolver {
         return true;
     }
 
-    private Elem.Order routeOrder(List<Map<Integer, Integer>> aislesState /* mutable */, Set<Integer> currAisles, int orderIdx) {
+    private Order routeOrder(List<Map<Integer, Integer>> aislesState /* mutable */, Set<Integer> currAisles, int orderIdx) {
         Map<Integer, Integer> orderMap = orders.get(orderIdx);
         // calcular orden
         int nElems = 0; 
@@ -72,12 +117,12 @@ public class Heuristica4 extends ChallengeSolver {
         }
         // check es valida
         if (nElems > waveSizeUB) {
-            return new Elem.Order(false, orderIdx, 0, 0, null);
+            return new Order(false, orderIdx, 0, 0, null);
         }
         // selección de pasillos
         // heuristica: prefiero los pasillos que mejor se ajusten a la orden
-        Set<Elem.Aisle> selectedAisles = new HashSet<>();
-        PriorityQueue<Elem.Aisle> aislesHeap = new PriorityQueue<>((a, b) -> Double.compare(b.delta, a.delta));
+        Set<Aisle> selectedAisles = new HashSet<>();
+        PriorityQueue<Aisle> aislesHeap = new PriorityQueue<>((a, b) -> Double.compare(b.delta, a.delta));
         for (int aisleIdx = 0; aisleIdx < aislesState.size(); ++aisleIdx) {
             Map<Integer, Integer> aisle = aislesState.get(aisleIdx);
             double aisleDelta = 0;
@@ -92,12 +137,12 @@ public class Heuristica4 extends ChallengeSolver {
             if (currAisles != null && currAisles.contains(aisleIdx)) {
                 aisleDelta = Double.POSITIVE_INFINITY;
             }
-            aislesHeap.add(new Elem.Aisle(aisleIdx, aisleDelta, orderElems));
+            aislesHeap.add(new Aisle(aisleIdx, aisleDelta, orderElems));
         }
         int nElemsCopy = nElems;
         Map<Integer, Integer> orderMapCopy = new HashMap<Integer, Integer>(orderMap);
         while (nElemsCopy > 0 && !aislesHeap.isEmpty()) {
-            Elem.Aisle aisle = aislesHeap.poll();
+            Aisle aisle = aislesHeap.poll();
             selectedAisles.add(aisle);
             for (Map.Entry<Integer, Integer> entry : aisle.orderElems.entrySet()) {
                 int elem = entry.getKey();
@@ -110,15 +155,15 @@ public class Heuristica4 extends ChallengeSolver {
             }
         }
         if (selectedAisles.size() == 0 || nElemsCopy > 0) {
-            return new Elem.Order(false, orderIdx, 0, 0, null);
+            return new Order(false, orderIdx, 0, 0, null);
         }
         // heuristica: prefiero ordenes según #prod / #(pasillos seleccionados)
-        return new Elem.Order(true, orderIdx, (double) nElems / selectedAisles.size(), nElems, selectedAisles);
+        return new Order(true, orderIdx, (double) nElems / selectedAisles.size(), nElems, selectedAisles);
     }
 
-    private Elem.Order best(List<Elem.Order> ordersArray) {
-        Elem.Order max = null;
-        for (Elem.Order order : ordersArray) {
+    private Order best(List<Order> ordersArray) {
+        Order max = null;
+        for (Order order : ordersArray) {
             if (max == null || Double.compare(order.delta, max.delta) == 1) {
                 max = order;
             }
@@ -133,7 +178,7 @@ public class Heuristica4 extends ChallengeSolver {
         for (Map<Integer, Integer> aisle: aisles) {
             aislesState.add(new HashMap<>(aisle));
         }
-        List<Elem.Order> ordersArray = new ArrayList<>(ordersSize);
+        List<Order> ordersArray = new ArrayList<>(ordersSize);
         for (int orderIdx = 0; orderIdx < ordersSize; ++orderIdx) {
             ordersArray.add(routeOrder(aislesState, null, orderIdx));
         }
@@ -144,7 +189,7 @@ public class Heuristica4 extends ChallengeSolver {
 
         System.out.println("order,delta,elems,aisles,totalElems,totalAisles,currObj");
         while (ansOrders.size() < waveSizeUB) {
-            Elem.Order order = best(ordersArray);
+            Order order = best(ordersArray);
             if (order == null || Double.compare(order.delta, Double.NEGATIVE_INFINITY) == 0) {
                 break;
             }
@@ -178,7 +223,7 @@ public class Heuristica4 extends ChallengeSolver {
             ansAisles.addAll(order.aisleIdxs());
             order.delta = Double.NEGATIVE_INFINITY;
             elems += order.nElems;
-            for (Elem.Order other : ordersArray) {
+            for (Order other : ordersArray) {
                 if (!other.valid || Double.compare(other.delta, Double.NEGATIVE_INFINITY) == 0) {
                     continue;
                 }
@@ -202,4 +247,5 @@ public class Heuristica4 extends ChallengeSolver {
         System.out.println(String.format("valid: %b", valid));
         return sol;
     }
+}
 }
