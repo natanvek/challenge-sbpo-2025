@@ -218,10 +218,6 @@ public class Solver extends ChallengeSolver {
         }
     }
 
-    @Override
-    public String getName() {
-        return "Heuristica5";
-    }
     
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {

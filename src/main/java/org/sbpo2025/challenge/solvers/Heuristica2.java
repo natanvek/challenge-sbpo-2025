@@ -11,11 +11,6 @@ public class Heuristica2 extends Heuristica {
     public Heuristica2(List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aisles, int nItems, int waveSizeLB, int waveSizeUB) {
         super(orders, aisles, nItems, waveSizeLB, waveSizeUB);
     }
-
-    @Override
-    public String getName() {
-        return "Heuristica2";  // Nombre propio de la subclase
-    }
     
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {

@@ -8,10 +8,15 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 public class Challenge {
@@ -110,7 +115,7 @@ public class Challenge {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // Start the stopwatch to track the running time
         StopWatch stopWatch = StopWatch.createStarted();
 
@@ -123,27 +128,39 @@ public class Challenge {
         Challenge challenge = new Challenge();
         challenge.readInput(args[0]);
 
-        ChallengeSolver[] solvers = new ChallengeSolver[] {
-            new Heuristica2(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-            new BF10(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-            new BF5yH2(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-            new Heuristica3(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-            new Heuristica3b(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-            new Ranking(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-            new Heuristica4.Solver(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-            new RandomAisles(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-            new H2yShuffleAisles(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-            new H2yPares(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-            new Heuristica5.Solver(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB)
-        };
+        // ChallengeSolver[] solvers = new ChallengeSolver[] {
+        //     new Heuristica2(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
+        //     new BF10(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
+        //     new BF5yH2(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
+        //     new Heuristica3(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
+        //     new Heuristica3b(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
+        //     new BottomUpRanking(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
+        //     new Heuristica4.Solver(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
+        //     new RandomAisles(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
+        //     new H2yShuffleAisles(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
+        //     new H2yPares(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
+        //     new Heuristica5.Solver(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB)
+        // };
         
         String solverName = args[2];
         
-        for (ChallengeSolver solver : solvers) {
-            if(!solver.getName().equals(solverName)) continue;
+        Class<?> Heuristica = Class.forName(("org.sbpo2025.challenge.solvers." + solverName));
+
+        if (ChallengeSolver.class.isAssignableFrom(Heuristica)) {
+            // Crear una instancia del solver
+            Constructor<?> constructor = Heuristica.getConstructor(List.class, List.class, int.class, int.class, int.class);
+            ChallengeSolver solver = (ChallengeSolver) constructor.newInstance(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB);
+
             ChallengeSolution challengeSolution = solver.solve(stopWatch);
             challenge.writeOutput(challengeSolution, args[1]);
+        } else {
+            System.out.println(solverName + " is not a valid Solver class.");
         }
+
+
+        stopWatch.stop();
+
+        Files.writeString(Path.of(args[1]), stopWatch.getTime(TimeUnit.MILLISECONDS) + "", StandardOpenOption.APPEND);
 
     }
 }

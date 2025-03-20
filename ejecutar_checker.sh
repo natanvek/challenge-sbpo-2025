@@ -7,9 +7,9 @@ SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 
 DATASET_DIR="$SCRIPT_DIR/datasets/a"
 
-if [[ " $* " == *" -toy "* ]]; then
-    DATASET_DIR="$SCRIPT_DIR/datasets/toy"
-    shift
+if [[ " $* " == *" -d "* ]]; then
+    DATASET_DIR="$SCRIPT_DIR/datasets/$2"
+    shift 2
 fi
 OUTPUT_DIR="$SCRIPT_DIR/output"
 

@@ -19,11 +19,6 @@ public class H2yShuffleAisles extends Heuristica {
     public H2yShuffleAisles(List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aisles, int nItems, int waveSizeLB, int waveSizeUB) {
         super(orders, aisles, nItems, waveSizeLB, waveSizeUB);
     }
-
-    @Override
-    public String getName() {
-        return "H2yShuffleAisles";  // Nombre propio de la subclase
-    }
     
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {

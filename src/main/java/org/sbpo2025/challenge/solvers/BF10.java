@@ -13,10 +13,6 @@ public class BF10 extends Heuristica {
         super(orders, aisles, nItems, waveSizeLB, waveSizeUB);
     }
 
-    @Override
-    public String getName() {
-        return "BF10"; // Nombre propio de la subclase
-    }
 
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {
@@ -47,7 +43,7 @@ public class BF10 extends Heuristica {
             Cart actual = new Cart();
             for (int i = 0; i < tomo_pasillos; i++)
                 if ((mask & (1 << i)) != 0)
-                    actual.addAisle(i);
+                    actual.addAisle(aisles[i]);
 
             actual.fill();
             

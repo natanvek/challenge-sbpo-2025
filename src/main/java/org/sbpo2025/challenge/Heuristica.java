@@ -2,6 +2,7 @@ package org.sbpo2025.challenge;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.sbpo2025.challenge.Heuristica.Cart;
+import org.sbpo2025.challenge.Heuristica.EfficientCart;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -41,13 +42,16 @@ public abstract class Heuristica extends ChallengeSolver {
 
     protected Aisle[] aisles_sorted;
 
+    protected static int nItems;
     protected int os;
     protected int as;
+    // protected int nItems;
 
     protected class Cart {
         public Set<Integer> my_orders = new HashSet<>();
         public Set<Integer> my_aisles = new HashSet<>();;
         public Map<Integer, Integer> available = new HashMap<>();
+        
         public int cantItems = 0;
 
         public Cart() {}
@@ -87,15 +91,10 @@ public abstract class Heuristica extends ChallengeSolver {
             return false;
         }
 
-
         public void addAisle(Aisle a) {
             my_aisles.add(a.id);
             for (Map.Entry<Integer, Integer> entry : a.items.entrySet())
                 available.merge(entry.getKey(), entry.getValue(), Integer::sum);
-        }
-
-        public void addAisle(int posInAislesh) {
-            addAisle(aisles[posInAislesh]);
         }
 
         public void addOrder(Order o) {
@@ -103,9 +102,6 @@ public abstract class Heuristica extends ChallengeSolver {
             my_orders.add(o.id);
         }
 
-        public void addOrder(int posInOrdersh) {
-            addOrder(orders[posInOrdersh]);
-        }
 
         public boolean removeRequestIfPossible(Map<Integer, Integer> m) {
             for (Map.Entry<Integer, Integer> entry : m.entrySet()) {
@@ -155,13 +151,133 @@ public abstract class Heuristica extends ChallengeSolver {
         }
     }
 
-    public Heuristica(List<Map<Integer, Integer>> _orders, List<Map<Integer, Integer>> _aisles, int nItems,
-            int waveSizeLB, int waveSizeUB) {
-        super(_orders, _aisles, nItems, waveSizeLB, waveSizeUB);
 
-        aisles = new Aisle[_aisles.size()];
+   protected class EfficientCart { // deberia crear una clase padre o mismo extender
+        private static int[] available = new int[nItems];
+        private static ArrayList<Integer> visited = new ArrayList<>();
         
+        public Set<Integer> my_aisles = new HashSet<>();
+        public int cantItems = 0;
 
+        public void copy(EfficientCart otro) {
+            my_aisles.clear();
+            my_aisles.addAll(otro.my_aisles);
+            cantItems = otro.cantItems;
+        }
+
+        public EfficientCart(EfficientCart otro) {
+            copy(otro);
+        }
+
+        public EfficientCart(){}
+
+        public double getValue() {
+            if (my_aisles.size() == 0)
+                return 0.0;
+            return (double) cantItems / my_aisles.size();
+        }
+
+        public int getCantItems() {
+            return cantItems;
+        }
+
+        public int getTope() {
+            if (getValue() < 1e-5)
+                return as - 1;
+            return Math.min((int) Math.floor(waveSizeUB / getValue()), as - 1);
+        }
+
+        public boolean update(EfficientCart otro) {
+            if (otro.getValue() > getValue()) {
+                copy(otro);
+                return true;
+            }
+
+            return false;
+        }
+
+        public int aisleCount(){
+            return my_aisles.size();
+        }
+
+        public boolean hasAisle(Aisle a){
+            return my_aisles.contains(a.id);
+        }
+
+
+        public void addAisle(Aisle a) {
+            my_aisles.add(a.id);
+
+            for (Map.Entry<Integer, Integer> entry : a.items.entrySet()){
+                if(available[entry.getKey()] == 0) 
+                    visited.add(entry.getKey());
+
+                available[entry.getKey()] += entry.getValue();
+            }
+        }
+
+        public void addOrder(Order o) {
+            cantItems += o.size;
+        }
+
+        public void addOrder(int posInOrdersh) {
+            addOrder(orders[posInOrdersh]);
+        }
+
+        public boolean removeRequestIfPossible(Map<Integer, Integer> m) {
+            for (Map.Entry<Integer, Integer> entry : m.entrySet()) {
+                int elem = entry.getKey(), cant = entry.getValue();
+                if (available[elem] < cant)
+                    return false;
+            }
+            for (Map.Entry<Integer, Integer> entry : m.entrySet()) {
+                int elem = entry.getKey(), cant = entry.getValue();
+                available[elem] -= cant;
+            }
+            return true;
+        }
+
+
+        public void resetAisles(){
+            cantItems = 0;
+
+            for(int k : visited)
+                available[k] = 0;
+
+            visited.clear();
+
+            for (int a : my_aisles)
+                addAisle(idToAisle[a]);
+        }
+
+        // asegurate de haber ejecutado resetAisles antes
+        public void fill() {            
+            for (Order o : orders) {
+                if (cantItems + o.size > waveSizeUB)
+                    continue;
+
+                if (removeRequestIfPossible(o.items))
+                    addOrder(o);
+            }
+        }
+
+        // asegurate de llamarlo después de fill
+        public void removeRedundantAisles() {
+            for (Aisle p : aisles_sorted) 
+                if (hasAisle(p) && removeRequestIfPossible(p.items))
+                    my_aisles.remove(p.id);   
+    
+        }
+    }
+
+    public Heuristica(List<Map<Integer, Integer>> _orders, List<Map<Integer, Integer>> _aisles, int _nItems,
+            int waveSizeLB, int waveSizeUB) {
+        super(_orders, _aisles, _nItems, waveSizeLB, waveSizeUB);
+
+        nItems = _nItems;
+        aisles = new Aisle[_aisles.size()];
+
+                
         for (int a = 0; a < _aisles.size(); a++) {
             aisles[a] = new Aisle(a, _aisles.get(a), 0);
             for (Map.Entry<Integer, Integer> entry : _aisles.get(a).entrySet())
@@ -199,7 +315,7 @@ public abstract class Heuristica extends ChallengeSolver {
         for (int sol = 0; sol <= tope; ++sol) {
             Cart actual = new Cart();
             for (int p = 0; p <= sol; ++p)
-                actual.addAisle(p);
+                actual.addAisle(aisles[p]);
 
             actual.fill();
 

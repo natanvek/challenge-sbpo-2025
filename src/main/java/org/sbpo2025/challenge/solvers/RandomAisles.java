@@ -25,11 +25,6 @@ public class RandomAisles extends Heuristica {
     }
 
     @Override
-    public String getName() {
-        return "RandomAisles"; // Nombre propio de la subclase
-    }
-
-    @Override
     public ChallengeSolution solve(StopWatch stopWatch) {
         int[] pesosAisle = new int[as];
 
@@ -68,7 +63,7 @@ public class RandomAisles extends Heuristica {
 
             Cart actual = new Cart();
             for(int i = 0; i <= randomNum; ++i) 
-                actual.addAisle(indices.get(i));
+                actual.addAisle(aisles[indices.get(i)]);
             
             actual.fill();
 

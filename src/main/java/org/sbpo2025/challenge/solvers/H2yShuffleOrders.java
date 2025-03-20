@@ -19,11 +19,6 @@ public class H2yShuffleOrders extends Heuristica {
     public H2yShuffleOrders(List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aisles, int nItems, int waveSizeLB, int waveSizeUB) {
         super(orders, aisles, nItems, waveSizeLB, waveSizeUB);
     }
-
-    @Override
-    public String getName() {
-        return "H2yShuffleOrders";  // Nombre propio de la subclase
-    }
     
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {
@@ -57,7 +52,7 @@ public class H2yShuffleOrders extends Heuristica {
             for(int sol = 0; sol < as; ++sol) {
                 Cart actual = new Cart();
                 for(int p = 0; p <= sol; ++p)
-                    actual.addAisle(p);
+                    actual.addAisle(aisles[p]);
                 
                 for(int o = 0; o < os; ++o) {
                     if(actual.cantItems + orders[o].size <= waveSizeUB && actual.removeRequestIfPossible(orders[o].items)) {

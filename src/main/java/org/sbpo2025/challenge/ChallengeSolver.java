@@ -27,7 +27,6 @@ public abstract class ChallengeSolver {
         this.waveSizeLB = waveSizeLB;
         this.waveSizeUB = waveSizeUB;
     }
-    public abstract String getName();
     public abstract ChallengeSolution solve(StopWatch stopWatch);
 
     /*

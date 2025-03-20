@@ -41,15 +41,16 @@ class WaveOrderPicking:
         with open(output_file_path, 'r') as file:
             lines = file.readlines()
             if not lines:  # Verifica si la lista está vacía
-                raise ValueError("No agregaste la nueva heuristica a Challenge o tipeaste mal el nombre")
+                raise ValueError("No agregaste la nueva heuristica a Challenge, tipeaste mal el nombre o hubo un error en la ejecución")
             num_orders = int(lines[0].strip())
             selected_orders = [int(lines[i + 1].strip()) for i in range(num_orders)]
             num_aisles = int(lines[num_orders + 1].strip())
             visited_aisles = [int(lines[num_orders + 2 + i].strip()) for i in range(num_aisles)]
+            execution_time = lines[num_orders + num_aisles + 2]
 
         selected_orders = list(set(selected_orders))
         visited_aisles = list(set(visited_aisles))
-        return selected_orders, visited_aisles
+        return selected_orders, visited_aisles, execution_time
 
     def is_solution_feasible(self, selected_orders, visited_aisles):
         total_units_picked = 0
@@ -109,7 +110,7 @@ if __name__ == "__main__":
 
     wave_order_picking = WaveOrderPicking()
     wave_order_picking.read_input(sys.argv[1])
-    selected_orders, visited_aisles = wave_order_picking.read_output(sys.argv[2])
+    selected_orders, visited_aisles, execution_time = wave_order_picking.read_output(sys.argv[2])
 
     is_feasible = wave_order_picking.is_solution_feasible(selected_orders, visited_aisles)
     objective_value = wave_order_picking.compute_objective_function(selected_orders, visited_aisles)
@@ -117,4 +118,5 @@ if __name__ == "__main__":
     if is_feasible:
         print("Objective function value:", '\033[38;5;226m' + str(objective_value) + "\033[0m")
         print("Aisles in answer: ", '\033[38;5;111m' + str(len(visited_aisles)) + "\033[0m")
+        print("Execution time: ", '\033[38;5;111m' + str(execution_time) + "\033[0m")
         

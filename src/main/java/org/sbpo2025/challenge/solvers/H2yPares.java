@@ -20,11 +20,6 @@ public class H2yPares extends Heuristica {
     }
 
     @Override
-    public String getName() {
-        return "H2yPares";
-    }
-    
-    @Override
     public ChallengeSolution solve(StopWatch stopWatch) {
         double[][] OP = new double[os][as];
         int[] Oq = new int[os];
@@ -32,16 +27,16 @@ public class H2yPares extends Heuristica {
 
         for (int o = 0; o < os; ++o) {
             Oq[o] = 0;
-            for (Map.Entry<Integer, Integer> entry : ordersh[o].items.entrySet()) {
+            for (Map.Entry<Integer, Integer> entry : orders[o].items.entrySet()) {
                 Oq[o] += entry.getValue();
             }
         }
         for(int o = 0; o < os; ++o) {          
-            if(ordersh[o].size > waveSizeUB) continue;
+            if(orders[o].size > waveSizeUB) continue;
             for(int p = 0; p < as; ++p) {
                 int value = 0;
-                for (Map.Entry<Integer, Integer> entry : ordersh[o].items.entrySet()) {
-                    value += Math.min(aislesh[p].items.getOrDefault(entry.getKey(), 0).intValue(), entry.getValue());
+                for (Map.Entry<Integer, Integer> entry : orders[o].items.entrySet()) {
+                    value += Math.min(aisles[p].items.getOrDefault(entry.getKey(), 0).intValue(), entry.getValue());
                 }
                 OP[o][p] = (double) value / Oq[o];
             }
@@ -52,15 +47,15 @@ public class H2yPares extends Heuristica {
                 Av[p] += OP[o][p];
             }
         }
-        Arrays.sort(aislesh, (a1, a2) -> Double.compare(Av[a2.id], Av[a1.id]));
+        Arrays.sort(aisles, (a1, a2) -> Double.compare(Av[a2.id], Av[a1.id]));
 
         Map<Integer, Integer> mapa_actual_ps = new HashMap<>();
         Set<Integer> rta_os = new HashSet<>();
         Set<Integer> rta_ps = new HashSet<>(), actual_ps = new HashSet<>();
         double rta_val = 0;
         for(int p = 0; p < as; ++p) {
-            actual_ps.add(aislesh[p].id);
-            for (Map.Entry<Integer, Integer> entry : aislesh[p].items.entrySet()) {
+            actual_ps.add(aisles[p].id);
+            for (Map.Entry<Integer, Integer> entry : aisles[p].items.entrySet()) {
                 int elem = entry.getKey(), cant = entry.getValue();
                 mapa_actual_ps.merge(elem, cant, Integer::sum);
             }
@@ -68,12 +63,12 @@ public class H2yPares extends Heuristica {
             Integer mirta = 0;
             Set<Integer> actual_os = new HashSet<>();
             final int p2 = p;
-            Arrays.sort(ordersh, (o1, o2) -> Double.compare(OP[o2.id][p2], OP[o1.id][p2]));
-            for(Order order : ordersh) {
-                if(mirta + order.size <= waveSizeUB && tryFill(order.items, copia_m)) {
-                    mirta += order.size;
-                    actual_os.add(order.id);
-                }
+            Arrays.sort(orders, (o1, o2) -> Double.compare(OP[o2.id][p2], OP[o1.id][p2]));
+            for(Order order : orders) {
+                // if(mirta + order.size <= waveSizeUB && tryFill(order.items, copia_m)) {
+                //     mirta += order.size;
+                //     actual_os.add(order.id);
+                // }
             }
             if(mirta >= waveSizeLB && (double) mirta / (p + 1) > rta_val ) {
                 rta_val = (double)mirta / (p + 1);

@@ -14,11 +14,6 @@ public class BF5yH2 extends Heuristica {
     }
 
     @Override
-    public String getName() {
-        return "BF5yH2"; // Nombre propio de la subclase
-    }
-
-    @Override
     public ChallengeSolution solve(StopWatch stopWatch) {
         int[] pesosAisle = new int[as];
 
@@ -57,10 +52,10 @@ public class BF5yH2 extends Heuristica {
                 Cart actual = new Cart();
 
                 for (int p : indices)
-                    actual.addAisle(p);
+                    actual.addAisle(aisles[p]);
 
                 for (int p = tomo_pasillos; p <= sol; ++p)
-                    actual.addAisle(p);
+                    actual.addAisle(aisles[p]);
 
                 actual.fill();
 

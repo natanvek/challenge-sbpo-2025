@@ -69,10 +69,6 @@ public class Solver extends ChallengeSolver {
         super(orders, aisles, nItems, waveSizeLB, waveSizeUB);
     }
 
-    @Override
-    public String getName() {
-        return "Heuristica4";
-    }
 
     private boolean takeOrder(List<Map<Integer, Integer>> aislesState /* mutable */, Order order) {
         Map<Integer, Integer> orderMap = orders.get(order.orderIdx);

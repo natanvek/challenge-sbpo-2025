@@ -14,10 +14,6 @@ public class Heuristica3 extends Heuristica {
         super(orders, aisles, nItems, waveSizeLB, waveSizeUB);
     }
 
-    @Override
-    public String getName() {
-        return "Heuristica3"; // Nombre propio de la subclase
-    }
 
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {

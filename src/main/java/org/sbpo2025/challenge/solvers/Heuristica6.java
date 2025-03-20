@@ -20,10 +20,6 @@ public class Heuristica6 extends Heuristica {
         super(orders, aisles, nItems, waveSizeLB, waveSizeUB);
     }
 
-    @Override
-    public String getName() {
-        return "Heuristica6";  // Nombre propio de la subclase
-    }
     
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {
@@ -66,7 +62,7 @@ public class Heuristica6 extends Heuristica {
                     ocuparon += meResta;
                 }
 
-                pasillosOptimos_o[o].addAisle(pmx);
+                pasillosOptimos_o[o].addAisle(aisles[pmx]);
                 
                 pesosAisle[pmx] += mxocupa;
 
