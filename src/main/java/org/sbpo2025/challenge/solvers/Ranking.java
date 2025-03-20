@@ -11,13 +11,14 @@ import java.nio.file.*;
 
 import org.apache.commons.lang3.time.StopWatch;
 
-public class BottomUpRanking extends Heuristica {
-    public BottomUpRanking(List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aislesh, int nItems, int waveSizeLB,
+public class Ranking extends Heuristica {
+    public Ranking(List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aislesh, int nItems,
+            int waveSizeLB,
             int waveSizeUB) {
         super(orders, aislesh, nItems, waveSizeLB, waveSizeUB);
     }
 
-    int registerSize = 15;
+    int registerSize = 30;
 
     public boolean insertCart(PriorityQueue<EfficientCart> queue, EfficientCart newCart) {
         if (queue.size() < registerSize) {
@@ -53,6 +54,7 @@ public class BottomUpRanking extends Heuristica {
 
         Arrays.sort(orders, (o1, o2) -> Integer.compare(o2.size, o1.size));
         Arrays.sort(aisles, (a1, a2) -> Integer.compare(pesosAisle[a2.id], pesosAisle[a1.id]));
+        Cart iniciarTope = pasada(as);
 
         PriorityQueue<EfficientCart>[] rankings = (PriorityQueue<EfficientCart>[]) new PriorityQueue[as + 1];
         for (int i = 0; i <= as; i++)
@@ -60,52 +62,63 @@ public class BottomUpRanking extends Heuristica {
 
         insertCart(rankings[0], new EfficientCart());
 
+        int tope2 = iniciarTope.getTope();
         int tope = as;
-        for (int r = 0; r < tope; ++r) { // si vas de 0 a tope no funca
-            PriorityQueue<EfficientCart> guardo = new PriorityQueue<>(
-                    Comparator.comparingInt(EfficientCart::getCantItems));
-            for (EfficientCart m : rankings[r]) { // podría recordar el available
-                for (Aisle p : aisles) {
-                    if (m.hasAisle(p))
-                        continue;
+        // int pasos = as;
+
+        System.out.println("Pasillos: " + as);
+        System.out.println("TopeH2: " + tope2);
+        for (Aisle p : aisles) {
+            System.out.print("\rTopeActual: " + tope);
+            for (int r = tope-1; r >= 0; --r) { // si vas de 0 a tope no funca
+                for (EfficientCart m : rankings[r]) {
                     EfficientCart copia = new EfficientCart(m);
-                    copia.setAvailable();
                     copia.addAisle(p);
                     copia.fill();
-                    insertCart(rankings[r + 1], copia);
 
-                    EfficientCart copia2 = new EfficientCart(copia);
-                    copia2.removeRedundantAisles(); // just in case
-
-                    if (copia2.cantItems >= waveSizeLB)
+                    if (copia.cantItems >= waveSizeLB)
                         tope = Math.min(tope, copia.getTope());
 
-                    if (copia2.aisleCount() == r + 1 || !copia2.hasAisle(p))
-                        continue;
-
-                    if (copia2.aisleCount() == r)
-                        insertCart(guardo, copia2);
-                    else
-                        insertCart(rankings[copia2.aisleCount()], copia2);
+                    insertCart(rankings[r+1], copia);
                 }
             }
-            for (EfficientCart m : guardo)
-                insertCart(rankings[r], m);
         }
 
         EfficientCart rta = new EfficientCart();
-
+        PriorityQueue<EfficientCart> top10 = new PriorityQueue<>(Comparator.comparingDouble(EfficientCart::getValue));
         for (int r = tope; r >= 0; --r)
             for (EfficientCart m : rankings[r])
-                if (m.cantItems >= waveSizeLB)
+                if (m.cantItems >= waveSizeLB){
                     rta.update(m);
+                    insertCart(top10, m);
+                }
 
+
+        System.out.println("TOP10 - Indices en Pesos");
+        for(EfficientCart m : top10){
+            List<Integer> indices = new ArrayList<>(0);
+            int index = 0;
+            for(Aisle p : aisles) {
+                if(m.hasAisle(p))
+                    indices.add(index);
+                ++index;
+            }
+            System.out.println(indices);
+
+        }
+
+                
         Cart rtaFinal = new Cart();
 
-        for (int a : rta.my_aisles)
+        for (int a : rta.getAisles())
             rtaFinal.addAisle(idToAisle[a]);
 
         rtaFinal.fill();
+
+
+        System.out.println(String.format("medirFill: %.2e", (double) medirFill));
+        System.out.println(String.format("medirSetAvailable: %.2e", (double) medirSetAvailable));
+        System.out.println(String.format("medirCopy: %.2e", (double) medirCopy));
         return new ChallengeSolution(rtaFinal.my_orders, rtaFinal.my_aisles);
     }
 }

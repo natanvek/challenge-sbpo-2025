@@ -32,12 +32,12 @@ public class Heuristica2 extends Heuristica {
 
         Arrays.sort(orders, (o1, o2) -> Integer.compare(o2.size, o1.size));
         Arrays.sort(aisles, (a1, a2) -> Integer.compare(pesosAisle[a2.id], pesosAisle[a1.id]));
-        Cart rta = pasada(as-1);
+        Cart rta = pasada(as);
 
 
         Arrays.sort(aisles, (a1, a2) -> Integer.compare(a2.size, a1.size));
 
-        rta.update(pasada(as-1));
+        rta.update(pasada(as));
 
         return new ChallengeSolution(rta.my_orders, rta.my_aisles);
     }

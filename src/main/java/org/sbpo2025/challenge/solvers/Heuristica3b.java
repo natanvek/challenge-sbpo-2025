@@ -20,8 +20,8 @@ public class Heuristica3b extends Heuristica {
 
         Cart rta = new Cart();
         Cart actual = new Cart();
-        int tope = as - 1;
-        while (actual.my_aisles.size() <= tope) {
+        int tope = as;
+        while (actual.my_aisles.size() < tope) {
             Aisle best_a = null;
             int ocupaMx = -1;
             Cart rta_parcial = new Cart();
