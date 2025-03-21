@@ -3,11 +3,7 @@ package org.sbpo2025.challenge.solvers; // Paquete correcto
 import org.sbpo2025.challenge.Heuristica;
 import org.sbpo2025.challenge.ChallengeSolution;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
-import java.nio.file.*;
 
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -18,10 +14,8 @@ public class Ranking extends Heuristica {
         super(orders, aislesh, nItems, waveSizeLB, waveSizeUB);
     }
 
-    int registerSize = 30;
-
-    public boolean insertCart(PriorityQueue<EfficientCart> queue, EfficientCart newCart) {
-        if (queue.size() < registerSize) {
+    public boolean insertCart(PriorityQueue<EfficientCart> queue, EfficientCart newCart, Integer regSize) {
+        if (queue.size() < regSize) {
             queue.offer(newCart);
             return true;
         }
@@ -56,21 +50,24 @@ public class Ranking extends Heuristica {
         Arrays.sort(aisles, (a1, a2) -> Integer.compare(pesosAisle[a2.id], pesosAisle[a1.id]));
         Cart iniciarTope = pasada(as);
 
+        int[] idToPos = new int[as];
+        for (int a = 0; a < as; ++a)
+            idToPos[aisles[a].id] = a;
+
         PriorityQueue<EfficientCart>[] rankings = (PriorityQueue<EfficientCart>[]) new PriorityQueue[as + 1];
         for (int i = 0; i <= as; i++)
             rankings[i] = new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems));
 
-        insertCart(rankings[0], new EfficientCart());
+        int registerSize = 100;
 
-        int tope2 = iniciarTope.getTope();
-        int tope = as;
-        // int pasos = as;
+        insertCart(rankings[0], new EfficientCart(), registerSize);
 
-        System.out.println("Pasillos: " + as);
-        System.out.println("TopeH2: " + tope2);
+        int tope = iniciarTope.getTope();
+
+        // System.out.println("Pasillos: " + as);
         for (Aisle p : aisles) {
-            System.out.print("\rTopeActual: " + tope);
-            for (int r = tope-1; r >= 0; --r) { // si vas de 0 a tope no funca
+            // System.out.print("\rTopeActual: " + tope);
+            for (int r = tope - 1; r >= 0; --r) { // si vas de 0 a tope no funca
                 for (EfficientCart m : rankings[r]) {
                     EfficientCart copia = new EfficientCart(m);
                     copia.addAisle(p);
@@ -79,46 +76,100 @@ public class Ranking extends Heuristica {
                     if (copia.cantItems >= waveSizeLB)
                         tope = Math.min(tope, copia.getTope());
 
-                    insertCart(rankings[r+1], copia);
+                    insertCart(rankings[r + 1], copia, registerSize);
                 }
             }
         }
+        // System.out.println();
 
+        int guardo = 100;
         EfficientCart rta = new EfficientCart();
         PriorityQueue<EfficientCart> top10 = new PriorityQueue<>(Comparator.comparingDouble(EfficientCart::getValue));
         for (int r = tope; r >= 0; --r)
             for (EfficientCart m : rankings[r])
-                if (m.cantItems >= waveSizeLB){
+                if (m.cantItems >= waveSizeLB) {
                     rta.update(m);
-                    insertCart(top10, m);
+                    insertCart(top10, m, guardo);
                 }
 
+        int optimos = 0;
+        int aparecen = 0;
+        int[] pasillosOptimos = new int[as];
+        for (EfficientCart m : top10)
+            for (Integer id : m.getAisles()) {
+                pasillosOptimos[id] += 1;
 
-        System.out.println("TOP10 - Indices en Pesos");
-        for(EfficientCart m : top10){
-            List<Integer> indices = new ArrayList<>(0);
-            int index = 0;
-            for(Aisle p : aisles) {
-                if(m.hasAisle(p))
-                    indices.add(index);
-                ++index;
+                if (pasillosOptimos[id] == 1)
+                    ++aparecen;
+
+                if (pasillosOptimos[id] == guardo)
+                    ++optimos;
             }
-            System.out.println(indices);
 
+        System.out.println("Optimos: " + optimos);
+        System.out.println("Quedan: " + (aparecen - optimos));
+        System.out.println("Tope: " + (tope));
+        Aisle[] aisles2 = new Aisle[aparecen - optimos];
+        int last = 0;
+        for (int id = 0; id < as; ++id) {
+            if (0 < pasillosOptimos[id] && pasillosOptimos[id] < guardo) {
+                aisles2[last++] = idToAisle[id];
+            } else if (pasillosOptimos[id] == guardo) {
+                for (Map.Entry<Integer, Integer> entry : idToAisle[id].items.entrySet())
+                    available_inicial[entry.getKey()] += entry.getValue();
+
+                aisles_iniciales.add(id);
+            }
         }
 
-                
+        System.out.println("Aisle2.size(): " + last);
+
+        for (int i = optimos; i <= as; i++)
+            rankings[i] = new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems));
+
+        registerSize = 2000;
+
+        insertCart(rankings[optimos], new EfficientCart(), registerSize);
+
+        for (Aisle p : aisles2) {
+            // System.out.print("\rTopeActual: " + tope);
+            for (int r = tope - 1; r >= optimos; --r) { // si vas de 0 a tope no funca
+                for (EfficientCart m : rankings[r]) {
+                    EfficientCart copia = new EfficientCart(m);
+                    copia.addAisle(p);
+                    copia.fill();
+
+                    if (copia.cantItems >= waveSizeLB)
+                        tope = Math.min(tope, copia.getTope());
+
+                    insertCart(rankings[r + 1], copia, registerSize);
+                }
+            }
+        }
+
+        rta = new EfficientCart();
+        for (int r = tope; r >= optimos; --r)
+            for (EfficientCart m : rankings[r])
+                if (m.cantItems >= waveSizeLB)
+                    rta.update(m);
+
         Cart rtaFinal = new Cart();
 
         for (int a : rta.getAisles())
             rtaFinal.addAisle(idToAisle[a]);
 
+        for (int a : aisles_iniciales)
+            rtaFinal.addAisle(idToAisle[a]);
+            
+        System.out.print("[");
+        
+        for (int p : rtaFinal.my_aisles)
+            System.out.print(idToPos[p]+", ");
+        
+        System.out.println("]");
+
         rtaFinal.fill();
 
-
-        System.out.println(String.format("medirFill: %.2e", (double) medirFill));
-        System.out.println(String.format("medirSetAvailable: %.2e", (double) medirSetAvailable));
-        System.out.println(String.format("medirCopy: %.2e", (double) medirCopy));
         return new ChallengeSolution(rtaFinal.my_orders, rtaFinal.my_aisles);
     }
 }

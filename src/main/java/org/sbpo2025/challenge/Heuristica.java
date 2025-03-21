@@ -150,14 +150,22 @@ public abstract class Heuristica extends ChallengeSolver {
         }
     }
 
-    public long medirFill = 0;
-    public long medirSetAvailable = 0;
-    public long medirCopy = 0;
+    public int[] available_inicial;
+    public Set<Integer> aisles_iniciales = new HashSet<>();
 
     protected class EfficientCart { // deberia crear una clase padre o mismo extender
         private static int[] available = new int[nItems];
         private static int[] modifiedDate = new int[nItems];
         private static int currentDate = 1;
+
+
+        public int aisleCount(){
+            return my_aisles.size();
+        }
+
+        public boolean hasAisle(Aisle a){
+            return my_aisles.contains(a.id);
+        }
 
         public Set<Integer> my_aisles = new HashSet<>();
         public int cantItems = 0;
@@ -167,8 +175,6 @@ public abstract class Heuristica extends ChallengeSolver {
         }
 
         public void copy(EfficientCart otro) {
-            medirCopy += my_aisles.size() * 2;
-            medirCopy += otro.my_aisles.size() * 2;
             my_aisles.clear();
             my_aisles.addAll(otro.my_aisles);
             cantItems = otro.cantItems;
@@ -181,9 +187,9 @@ public abstract class Heuristica extends ChallengeSolver {
         public EfficientCart(){}
 
         public double getValue() {
-            if (my_aisles.size() == 0)
+            if (aisleCount() + aisles_iniciales.size() == 0)
                 return 0.0;
-            return (double) cantItems / my_aisles.size();
+            return (double) cantItems / (aisleCount() + aisles_iniciales.size());
         }
 
         public int getCantItems() {
@@ -205,19 +211,10 @@ public abstract class Heuristica extends ChallengeSolver {
             return false;
         }
 
-        public int aisleCount(){
-            return my_aisles.size();
-        }
-
-        public boolean hasAisle(Aisle a){
-            return my_aisles.contains(a.id);
-        }
-
         private void addToAvailable(Aisle a) {
             for (Map.Entry<Integer, Integer> entry : a.items.entrySet()){
-                medirSetAvailable++;
-                if(modifiedDate[entry.getKey()] < currentDate)
-                    available[entry.getKey()] = 0;
+                if(modifiedDate[entry.getKey()] < currentDate) 
+                    available[entry.getKey()] = available_inicial[entry.getKey()];
                     
                 modifiedDate[entry.getKey()] = currentDate;
                 available[entry.getKey()] += entry.getValue();
@@ -235,14 +232,17 @@ public abstract class Heuristica extends ChallengeSolver {
         public boolean removeRequestIfPossible(Map<Integer, Integer> m) {
             for (Map.Entry<Integer, Integer> entry : m.entrySet()) {
                 int elem = entry.getKey(), cant = entry.getValue();
-                ++medirFill;
-                if (modifiedDate[elem] < currentDate || available[elem] < cant)
+                if(modifiedDate[elem] < currentDate) {
+                    modifiedDate[elem] = currentDate;
+                    available[elem] = available_inicial[elem];
+                }
+
+                if (available[elem] < cant)
                     return false;
             }
             for (Map.Entry<Integer, Integer> entry : m.entrySet()) {
                 int elem = entry.getKey(), cant = entry.getValue();
                 available[elem] -= cant;
-                ++medirFill;
             }
 
             return true;
@@ -250,10 +250,10 @@ public abstract class Heuristica extends ChallengeSolver {
 
         public void setAvailable(){
             currentDate++;
-            cantItems = 0;                
+            cantItems = 0;                               
+
             for(int a : my_aisles) 
                 addToAvailable(idToAisle[a]);
-
         }
 
         // asegurate de haber ejecutado resetAisles antes
@@ -504,6 +504,7 @@ public abstract class Heuristica extends ChallengeSolver {
         super(_orders, _aisles, _nItems, waveSizeLB, waveSizeUB);
 
         nItems = _nItems;
+        available_inicial = new int[nItems];
         aisles = new Aisle[_aisles.size()];
 
                 

@@ -127,20 +127,6 @@ public class Challenge {
     
         Challenge challenge = new Challenge();
         challenge.readInput(args[0]);
-
-        // ChallengeSolver[] solvers = new ChallengeSolver[] {
-        //     new Heuristica2(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-        //     new BF10(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-        //     new BF5yH2(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-        //     new Heuristica3(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-        //     new Heuristica3b(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-        //     new BottomUpRanking(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-        //     new Heuristica4.Solver(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-        //     new RandomAisles(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-        //     new H2yShuffleAisles(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-        //     new H2yPares(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB),
-        //     new Heuristica5.Solver(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB)
-        // };
         
         String solverName = args[2];
         
