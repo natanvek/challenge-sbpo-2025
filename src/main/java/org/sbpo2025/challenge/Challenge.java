@@ -146,7 +146,7 @@ public class Challenge {
 
         stopWatch.stop();
 
-        Files.writeString(Path.of(args[1]), stopWatch.getTime(TimeUnit.MILLISECONDS) + "", StandardOpenOption.APPEND);
+        Files.writeString(Path.of(args[1]), String.format("%.2f", ((double) stopWatch.getTime(TimeUnit.MILLISECONDS) / 60000)) + "", StandardOpenOption.APPEND);
 
     }
 }

@@ -25,3 +25,9 @@ una buena opcion puede ser agarrar cada order y con cplex buscar cuales son los 
 esto definiria un orden muhco mas optimo
 
 otra opcion siguiendo con la linea del cplex para cada order es agarro el mas grande, le busco los mejores pasillos, los meto en al respuesta, agarro el segundo le resto los available, le ejecuto cp-lex lo meto en la rta y asi
+
+
+Otras ideas.
+    - tener un ranking por pasillo que determine las mejores soluciones donde aparece un pasillo
+    - buscar alguna relación o armar un grafo dirigido que cada pasillo apunte a su mejor amigo
+    - agarrar el mejor > buscar su mejor amigo > computar la suma de esos 2 y buscar el 3ro y así
