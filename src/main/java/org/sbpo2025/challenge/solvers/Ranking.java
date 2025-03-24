@@ -58,7 +58,7 @@ public class Ranking extends Heuristica {
         for (int i = 0; i <= as; i++)
             rankings[i] = new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems));
 
-        int registerSize = 100;
+        int registerSize = 5;
 
         insertCart(rankings[0], new EfficientCart(), registerSize);
 
@@ -92,66 +92,66 @@ public class Ranking extends Heuristica {
                     insertCart(top10, m, guardo);
                 }
 
-        int optimos = 0;
-        int aparecen = 0;
-        int[] pasillosOptimos = new int[as];
-        for (EfficientCart m : top10)
-            for (Integer id : m.getAisles()) {
-                pasillosOptimos[id] += 1;
+        // int optimos = 0;
+        // int aparecen = 0;
+        // int[] pasillosOptimos = new int[as];
+        // for (EfficientCart m : top10)
+        //     for (Integer id : m.getAisles()) {
+        //         pasillosOptimos[id] += 1;
 
-                if (pasillosOptimos[id] == 1)
-                    ++aparecen;
+        //         if (pasillosOptimos[id] == 1)
+        //             ++aparecen;
 
-                if (pasillosOptimos[id] == guardo)
-                    ++optimos;
-            }
+        //         if (pasillosOptimos[id] == guardo)
+        //             ++optimos;
+        //     }
 
-        System.out.println("Optimos: " + optimos);
-        System.out.println("Quedan: " + (aparecen - optimos));
-        System.out.println("Tope: " + (tope));
-        Aisle[] aisles2 = new Aisle[aparecen - optimos];
-        int last = 0;
-        for (int id = 0; id < as; ++id) {
-            if (0 < pasillosOptimos[id] && pasillosOptimos[id] < guardo) {
-                aisles2[last++] = idToAisle[id];
-            } else if (pasillosOptimos[id] == guardo) {
-                for (Map.Entry<Integer, Integer> entry : idToAisle[id].items.entrySet())
-                    available_inicial[entry.getKey()] += entry.getValue();
+        // System.out.println("Optimos: " + optimos);
+        // System.out.println("Quedan: " + (aparecen - optimos));
+        // System.out.println("Tope: " + (tope));
+        // Aisle[] aisles2 = new Aisle[aparecen - optimos];
+        // int last = 0;
+        // for (int id = 0; id < as; ++id) {
+        //     if (0 < pasillosOptimos[id] && pasillosOptimos[id] < guardo) {
+        //         aisles2[last++] = idToAisle[id];
+        //     } else if (pasillosOptimos[id] == guardo) {
+        //         for (Map.Entry<Integer, Integer> entry : idToAisle[id].items.entrySet())
+        //             available_inicial[entry.getKey()] += entry.getValue();
 
-                aisles_iniciales.add(id);
-            }
-        }
+        //         aisles_iniciales.add(id);
+        //     }
+        // }
 
-        System.out.println("Aisle2.size(): " + last);
+        // System.out.println("Aisle2.size(): " + last);
 
-        for (int i = optimos; i <= as; i++)
-            rankings[i] = new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems));
+        // for (int i = optimos; i <= as; i++)
+        //     rankings[i] = new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems));
 
-        registerSize = 2000;
+        // registerSize = 2000;
 
-        insertCart(rankings[optimos], new EfficientCart(), registerSize);
+        // insertCart(rankings[optimos], new EfficientCart(), registerSize);
 
-        for (Aisle p : aisles2) {
-            // System.out.print("\rTopeActual: " + tope);
-            for (int r = tope - 1; r >= optimos; --r) { // si vas de 0 a tope no funca
-                for (EfficientCart m : rankings[r]) {
-                    EfficientCart copia = new EfficientCart(m);
-                    copia.addAisle(p);
-                    copia.fill();
+        // for (Aisle p : aisles2) {
+        //     // System.out.print("\rTopeActual: " + tope);
+        //     for (int r = tope - 1; r >= optimos; --r) { // si vas de 0 a tope no funca
+        //         for (EfficientCart m : rankings[r]) {
+        //             EfficientCart copia = new EfficientCart(m);
+        //             copia.addAisle(p);
+        //             copia.fill();
 
-                    if (copia.cantItems >= waveSizeLB)
-                        tope = Math.min(tope, copia.getTope());
+        //             if (copia.cantItems >= waveSizeLB)
+        //                 tope = Math.min(tope, copia.getTope());
 
-                    insertCart(rankings[r + 1], copia, registerSize);
-                }
-            }
-        }
+        //             insertCart(rankings[r + 1], copia, registerSize);
+        //         }
+        //     }
+        // }
 
-        rta = new EfficientCart();
-        for (int r = tope; r >= optimos; --r)
-            for (EfficientCart m : rankings[r])
-                if (m.cantItems >= waveSizeLB)
-                    rta.update(m);
+        // rta = new EfficientCart();
+        // for (int r = tope; r >= optimos; --r)
+        //     for (EfficientCart m : rankings[r])
+        //         if (m.cantItems >= waveSizeLB)
+        //             rta.update(m);
 
         Cart rtaFinal = new Cart();
 
