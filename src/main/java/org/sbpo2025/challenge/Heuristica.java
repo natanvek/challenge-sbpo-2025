@@ -39,7 +39,7 @@ public abstract class Heuristica extends ChallengeSolver {
     protected int nOrders;
     protected int nAisles;
 
-    public int getTope(AisleCollection c) {
+    public <AC extends AisleCollection> int getTope(AC c) {
         if (c.getValue() < 1e-5)
             return nAisles;
         return Math.min((int) Math.floor(waveSizeUB / c.getValue()), nAisles);
@@ -228,7 +228,7 @@ public abstract class Heuristica extends ChallengeSolver {
         }
     }
 
-    public AisleCollection updateAnswer(AisleCollection rta, AisleCollection otro) {
+    public static <AC extends AisleCollection> AC updateAnswer(AC rta, AC otro) {
         return rta.isWorseThan(otro) ? otro : rta;
     }
 

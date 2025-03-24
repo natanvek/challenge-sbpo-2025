@@ -8,7 +8,7 @@ import java.util.*;
 public abstract class AisleCollection implements Iterable<Aisle> {
 
     public int cantItems = 0;
-    public int capacity = 0;
+    protected int capacity = 0;
     protected static Inventory inv = new Inventory();
 
     public static void initializeInventory(int nItems) {

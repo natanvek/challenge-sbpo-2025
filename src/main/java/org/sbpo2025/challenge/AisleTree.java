@@ -11,7 +11,6 @@ public class AisleTree extends AisleCollection { // deberia crear una clase padr
     private int pasillos = 0;
     public Aisle myAisle;
     protected AisleTree padre;
-    public int capacity = 0;
 
     private AisleTree() {};
 

@@ -6,7 +6,6 @@ import java.util.*;
 
 public class AisleSet extends AisleCollection {
 
-    public int cantItems = 0;
     protected Set<Aisle> aisles;
 
 
