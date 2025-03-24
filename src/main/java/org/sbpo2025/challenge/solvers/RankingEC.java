@@ -53,53 +53,32 @@ public class RankingEC extends Heuristica {
         for (int a = 0; a < nAisles; ++a)
             idToPos[aisles[a].id] = a;
 
-        // Cart iniciarTope = pasada(as);
-
-        int tope = nAisles;
-        // long ti = stopWatch.getNanoTime();
-        // int iteraciones = 100;
-        // for(int it = 0; it < iteraciones; ++it){
-        // EfficientCart estimatingRegisterSize = EfficientCart.nullEfficientCart();
-        // for(Aisle a : aisles)
-        // estimatingRegisterSize = new EfficientCart(estimatingRegisterSize, a);
-
-        // fill(estimatingRegisterSize);
-        // }
-        // long delta_t = (stopWatch.getNanoTime() - ti) / iteraciones;
-
-        int registerSize = 5;
-        // int registerSize = (int) ((MAX_RUNTIME * 1e6) / (delta_t * tope * as));
-
-        System.out.println("register size: " + registerSize);
-
         PriorityQueue<EfficientCart>[] rankings = (PriorityQueue<EfficientCart>[]) new PriorityQueue[nAisles + 1];
         for (int i = 0; i <= nAisles; i++)
             rankings[i] = new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems));
 
+        int registerSize = 5;
+
         insertCart(rankings[0], new EfficientCart(), registerSize);
 
-        // System.out.println("Pasillos: " + as);
+        int tope = nAisles;
+
+        // System.out.println("Pasillos: " + nAisles);
         for (Aisle p : aisles) {
             // System.out.print("\rTopeActual: " + tope);
-
             for (int r = tope - 1; r >= 0; --r) { // si vas de 0 a tope no funca
                 for (EfficientCart m : rankings[r]) {
                     EfficientCart copia = new EfficientCart(m);
                     copia.addAisle(p);
-                    // copia.setAvailable();
-                    
-                    // fill(copia);
                     copia.fill();
 
-
                     if (copia.cantItems >= waveSizeLB)
-                        tope = Math.min(tope, getTope(copia));
+                        tope = Math.min(tope, copia.getTope());
 
                     insertCart(rankings[r + 1], copia, registerSize);
                 }
             }
         }
-
         // System.out.println();
 
         int guardo = 100;
@@ -108,16 +87,10 @@ public class RankingEC extends Heuristica {
         for (int r = tope; r >= 0; --r)
             for (EfficientCart m : rankings[r])
                 if (m.cantItems >= waveSizeLB) {
-                    rta = updateAnswer(rta, m);
+                    rta.update(m);
                     insertCart(top10, m, guardo);
                 }
 
-        System.out.print("[");
-
-        for (Integer a : rta.my_aisles)
-            System.out.print(idToPos[a] + ", ");
-
-        System.out.println("]");
 
         return getSolution(rta);
     }
