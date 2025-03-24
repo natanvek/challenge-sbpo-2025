@@ -46,11 +46,6 @@ public abstract class Heuristica extends ChallengeSolver {
     public Set<Integer> aisles_iniciales = new HashSet<>();
 
     protected class EfficientCart { // deberia crear una clase padre o mismo extender
-        private static int[] available = new int[nItems];
-        private static int[] modifiedDate = new int[nItems];
-        private static int currentDate = 1;
-
-
         public int aisleCount(){
             return my_aisles.size();
         }
@@ -103,16 +98,6 @@ public abstract class Heuristica extends ChallengeSolver {
             return false;
         }
 
-        private void addToAvailable(Aisle a) {
-            for (Map.Entry<Integer, Integer> entry : a.items.entrySet()){
-                if(modifiedDate[entry.getKey()] < currentDate) 
-                    available[entry.getKey()] = available_inicial[entry.getKey()];
-                    
-                modifiedDate[entry.getKey()] = currentDate;
-                available[entry.getKey()] += entry.getValue();
-            }
-        }
-
         public void addAisle(Aisle a) {
             my_aisles.add(a.id);
         }
@@ -121,31 +106,13 @@ public abstract class Heuristica extends ChallengeSolver {
             cantItems += o.size;
         }
 
-        public boolean checkAndRemove(Map<Integer, Integer> m) {
-            for (Map.Entry<Integer, Integer> entry : m.entrySet()) {
-                int elem = entry.getKey(), cant = entry.getValue();
-                if(modifiedDate[elem] < currentDate) {
-                    modifiedDate[elem] = currentDate;
-                    available[elem] = available_inicial[elem];
-                }
-
-                if (available[elem] < cant)
-                    return false;
-            }
-            for (Map.Entry<Integer, Integer> entry : m.entrySet()) {
-                int elem = entry.getKey(), cant = entry.getValue();
-                available[elem] -= cant;
-            }
-
-            return true;
-        }
 
         public void setAvailable(){
-            currentDate++;
+            Inventory.reset();
             cantItems = 0;                               
 
             for(int a : my_aisles) 
-                addToAvailable(idToAisle[a]);
+                Inventory.addAisle(idToAisle[a]);
         }
 
         // asegurate de haber ejecutado resetAisles antes
@@ -155,7 +122,7 @@ public abstract class Heuristica extends ChallengeSolver {
                 if (cantItems + o.size > waveSizeUB)
                     continue;
 
-                if (checkAndRemove(o.items))
+                if (Inventory.checkAndRemove(o.items))
                     addOrder(o);
             }
         }
@@ -163,7 +130,7 @@ public abstract class Heuristica extends ChallengeSolver {
         // asegurate de llamarlo después de fill
         public void removeRedundantAisles() {
             for (Aisle p : aisles_sorted) 
-                if (hasAisle(p) && checkAndRemove(p.items))
+                if (hasAisle(p) && Inventory.checkAndRemove(p.items))
                     my_aisles.remove(p.id);   
     
         }
@@ -240,7 +207,7 @@ public abstract class Heuristica extends ChallengeSolver {
             rta_aisles.add(a);
 
         for (Order o : orders)
-            if (s.getCantItems() + o.size <= waveSizeUB && s.checkAndRemove(o.items))
+            if (s.getCantItems() + o.size <= waveSizeUB && Inventory.checkAndRemove(o.items))
                 rta_orders.add(o.id);
 
         return new ChallengeSolution(rta_orders, rta_aisles);
