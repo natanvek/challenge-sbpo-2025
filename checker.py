@@ -116,7 +116,7 @@ if __name__ == "__main__":
     objective_value = wave_order_picking.compute_objective_function(selected_orders, visited_aisles)
 
     if is_feasible:
-        print("Objective function value:", '\033[38;5;226m' + str(objective_value) + "\033[0m")
-        print("Aisles in answer: ", '\033[38;5;111m' + str(len(visited_aisles)) + "\033[0m")
-        print("Execution time: ", '\033[38;5;111m' + str(execution_time) + "\033[0m")
+        print("Value:", '\033[38;5;226m' + str(f"{objective_value:.2f}") + "\033[0m", end=" | ")
+        print("Aisles:", '\033[38;5;111m' + str(len(visited_aisles)) + "\033[0m",end=" | ")
+        print("Execution Time:", '\033[38;5;10m' + str(execution_time) + "\033[0m"+"min")
         

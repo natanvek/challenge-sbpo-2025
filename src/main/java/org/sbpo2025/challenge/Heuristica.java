@@ -108,7 +108,7 @@ public abstract class Heuristica extends ChallengeSolver {
 
     protected class EfficientCart { // deberia crear una clase padre o mismo extender
 
-        public Set<Integer> my_aisles = new HashSet<>();
+        public Set<Aisle> my_aisles = new HashSet<>();
         public int cantItems = 0;
 
 
@@ -117,11 +117,11 @@ public abstract class Heuristica extends ChallengeSolver {
         }
 
         public boolean hasAisle(Aisle a) {
-            return my_aisles.contains(a.id);
+            return my_aisles.contains(a);
         }
 
 
-        public Set<Integer> getAisles() {
+        public Set<Aisle> getAisles() {
             return my_aisles;
         }
 
@@ -163,7 +163,7 @@ public abstract class Heuristica extends ChallengeSolver {
         }
 
         public void addAisle(Aisle a) {
-            my_aisles.add(a.id);
+            my_aisles.add(a);
         }
 
         public void addOrder(Order o) {
@@ -174,8 +174,8 @@ public abstract class Heuristica extends ChallengeSolver {
             Inventory.reset();
             cantItems = 0;
 
-            for (int a : my_aisles)
-                Inventory.addAisle(idToAisle[a]);
+            for (Aisle a : my_aisles)
+                Inventory.addAisle(a);
         }
 
         // asegurate de haber ejecutado resetAisles antes
@@ -184,16 +184,19 @@ public abstract class Heuristica extends ChallengeSolver {
         public void removeRedundantAisles() {
             for (Aisle p : aisles_sorted)
                 if (hasAisle(p) && Inventory.checkAndRemove(p.items))
-                    my_aisles.remove(p.id);
+                    my_aisles.remove(p);
 
         }
     }
 
+    
 
     public void updateRta(EfficientCart ec) {
+        EfficientCart copy = new EfficientCart(ec);
+        copy.removeRedundantAisles();
         if(ec.cantItems >= waveSizeLB) {
-            rta.update(ec);
-            tope = Math.min(tope, ec.getTope());
+            rta.update(copy);
+            tope = Math.min(tope, rta.getTope());
         }
     }
 
@@ -220,8 +223,8 @@ public abstract class Heuristica extends ChallengeSolver {
 
         rta.setAvailable();
 
-        for (Integer a : rta.my_aisles)
-            rta_aisles.add(a);
+        for (Aisle a : rta.my_aisles)
+            rta_aisles.add(a.id);
 
         for (Order o : orders)
             if (rta.getCantItems() + o.size <= waveSizeUB && Inventory.checkAndRemove(o.items)){

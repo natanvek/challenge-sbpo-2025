@@ -26,12 +26,12 @@
 <!--            <scope>compile</scope>-->
 <!--        </dependency>-->
         <!--        Uncomment the following lines to use OR-Tools:-->
-       <dependency>
+       <!-- <dependency>
            <groupId>com.google.ortools</groupId>
            <artifactId>ortools-java</artifactId>
            <version>9.11.4210</version>
            <scope>compile</scope>
-       </dependency>
+       </dependency> -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -46,6 +46,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.4.2</version>
                 <configuration>
+                    <compilerArgument>-Xlint:unchecked</compilerArgument>
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
