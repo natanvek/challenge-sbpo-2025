@@ -236,6 +236,26 @@ public abstract class Heuristica extends ChallengeSolver {
         return rta.isWorseThan(otro) ? otro : rta;
     }
 
+    protected EfficientCart pasada(int tope) {
+        EfficientCart rta = new EfficientCart();
+        for (int sol = 0; sol < tope; ++sol) {
+            EfficientCart actual = new EfficientCart();
+            for (int p = 0; p <= sol; ++p)
+                actual.addAisle(aisles[p]);
+
+            actual.fill();
+
+            actual.removeRedundantAisles();
+
+            if (actual.cantItems >= waveSizeLB)
+                rta.update(actual);
+
+            tope = Math.min(tope, rta.getTope());
+
+        }
+        return rta;
+    }
+
     public ChallengeSolution getSolution(EfficientCart s) {
         Set<Integer> rta_orders = new HashSet<>(), rta_aisles = new HashSet<>();
 

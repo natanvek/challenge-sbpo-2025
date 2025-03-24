@@ -56,9 +56,9 @@ public class Ranking extends Heuristica {
         for (int a = 0; a < nAisles; ++a)
             idToPos[aisles[a].id] = a;
 
-        // Cart iniciarTope = pasada(as);
+        EfficientCart iniciarTope = pasada(nAisles);
 
-        int tope = nAisles;
+        int tope = iniciarTope.getTope();
         // long ti = stopWatch.getNanoTime();
         // int iteraciones = 100;
         // for(int it = 0; it < iteraciones; ++it){

@@ -61,7 +61,9 @@ public class RankingEC extends Heuristica {
 
         insertCart(rankings[0], new EfficientCart(), registerSize);
 
-        int tope = nAisles;
+        EfficientCart iniciarTope = pasada(nAisles);
+
+        int tope = iniciarTope.getTope();
 
         // System.out.println("Pasillos: " + nAisles);
         for (Aisle p : aisles) {
