@@ -7,8 +7,8 @@ import java.util.*;
 
 import org.apache.commons.lang3.time.StopWatch;
 
-public class Ranking extends Heuristica {
-    public Ranking(List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aislesh, int nItems,
+public class RankingOptimos extends Heuristica {
+    public RankingOptimos(List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aislesh, int nItems,
             int waveSizeLB,
             int waveSizeUB) {
         super(orders, aislesh, nItems, waveSizeLB, waveSizeUB);
@@ -91,6 +91,67 @@ public class Ranking extends Heuristica {
                     rta.update(m);
                     insertCart(top10, m, guardo);
                 }
+
+        // int optimos = 0;
+        // int aparecen = 0;
+        // int[] pasillosOptimos = new int[as];
+        // for (EfficientCart m : top10)
+        //     for (Integer id : m.getAisles()) {
+        //         pasillosOptimos[id] += 1;
+
+        //         if (pasillosOptimos[id] == 1)
+        //             ++aparecen;
+
+        //         if (pasillosOptimos[id] == guardo)
+        //             ++optimos;
+        //     }
+
+        // System.out.println("Optimos: " + optimos);
+        // System.out.println("Quedan: " + (aparecen - optimos));
+        // System.out.println("Tope: " + (tope));
+        // Aisle[] aisles2 = new Aisle[aparecen - optimos];
+        // int last = 0;
+        // for (int id = 0; id < as; ++id) {
+        //     if (0 < pasillosOptimos[id] && pasillosOptimos[id] < guardo) {
+        //         aisles2[last++] = idToAisle[id];
+        //     } else if (pasillosOptimos[id] == guardo) {
+        //         for (Map.Entry<Integer, Integer> entry : idToAisle[id].items.entrySet())
+        //             available_inicial[entry.getKey()] += entry.getValue();
+
+        //         aisles_iniciales.add(id);
+        //     }
+        // }
+
+        // System.out.println("Aisle2.size(): " + last);
+
+        // for (int i = optimos; i <= as; i++)
+        //     rankings[i] = new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems));
+
+        // registerSize = 2000;
+
+        // insertCart(rankings[optimos], new EfficientCart(), registerSize);
+
+        // for (Aisle p : aisles2) {
+        //     // System.out.print("\rTopeActual: " + tope);
+        //     for (int r = tope - 1; r >= optimos; --r) { // si vas de 0 a tope no funca
+        //         for (EfficientCart m : rankings[r]) {
+        //             EfficientCart copia = new EfficientCart(m);
+        //             copia.addAisle(p);
+        //             copia.fill();
+
+        //             if (copia.cantItems >= waveSizeLB)
+        //                 tope = Math.min(tope, copia.getTope());
+
+        //             insertCart(rankings[r + 1], copia, registerSize);
+        //         }
+        //     }
+        // }
+
+        // rta = new EfficientCart();
+        // for (int r = tope; r >= optimos; --r)
+        //     for (EfficientCart m : rankings[r])
+        //         if (m.cantItems >= waveSizeLB)
+        //             rta.update(m);
 
         return getSolution(rta);
     }

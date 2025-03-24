@@ -19,17 +19,17 @@ public class Heuristica3 extends Heuristica {
     public ChallengeSolution solve(StopWatch stopWatch) {
         Arrays.sort(orders, (o1, o2) -> Integer.compare(o2.size, o1.size));
 
-        Cart rta = new Cart();
-        Cart actual = new Cart();
+        EfficientCart rta = new EfficientCart();
+        EfficientCart actual = new EfficientCart();
         int tope = as;
         while (actual.my_aisles.size() < tope) {
             Aisle best_a = null;
-            Cart rta_parcial = new Cart();
+            EfficientCart rta_parcial = new EfficientCart();
             for (Aisle a : aisles) {
                 if (actual.my_aisles.contains(a.id))
                     continue;
 
-                Cart copia = new Cart(actual);
+                EfficientCart copia = new EfficientCart(actual);
                 copia.addAisle(a);
                 copia.fill();
                 copia.removeRedundantAisles();
@@ -50,6 +50,6 @@ public class Heuristica3 extends Heuristica {
             tope = Math.min(tope, rta.getTope());
         }
 
-        return new ChallengeSolution(rta.my_orders, rta.my_aisles);
+        return getSolution(rta);
     }
 }

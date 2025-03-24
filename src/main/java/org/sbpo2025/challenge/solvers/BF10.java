@@ -34,13 +34,13 @@ public class BF10 extends Heuristica {
         Arrays.sort(orders, (o1, o2) -> Integer.compare(o2.size, o1.size));
         Arrays.sort(aisles, (a1, a2) -> Integer.compare(pesosAisle[a2.id], pesosAisle[a1.id]));
 
-        Cart rta = new Cart();
+        EfficientCart rta = new EfficientCart();
 
         int tomo_pasillos = Math.min(10, as); // Conjunto {0,1,2,3,4,5,6,7,8,9}
         int totalSubsets = 1 << tomo_pasillos; // 2^n subconjuntos
 
         for (int mask = 0; mask < totalSubsets; mask++) {
-            Cart actual = new Cart();
+            EfficientCart actual = new EfficientCart();
             for (int i = 0; i < tomo_pasillos; i++)
                 if ((mask & (1 << i)) != 0)
                     actual.addAisle(aisles[i]);
@@ -52,6 +52,6 @@ public class BF10 extends Heuristica {
 
         }
 
-        return new ChallengeSolution(rta.my_orders, rta.my_aisles);
+        return getSolution(rta);
     }
 }

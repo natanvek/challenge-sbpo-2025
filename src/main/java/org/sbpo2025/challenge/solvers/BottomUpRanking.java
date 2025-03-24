@@ -100,12 +100,6 @@ public class BottomUpRanking extends Heuristica {
                 if (m.cantItems >= waveSizeLB)
                     rta.update(m);
 
-        Cart rtaFinal = new Cart();
-
-        for (int a : rta.my_aisles)
-            rtaFinal.addAisle(idToAisle[a]);
-
-        rtaFinal.fill();
-        return new ChallengeSolution(rtaFinal.my_orders, rtaFinal.my_aisles);
+        return getSolution(rta);
     }
 }

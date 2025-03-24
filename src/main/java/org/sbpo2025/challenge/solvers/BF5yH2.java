@@ -37,7 +37,7 @@ public class BF5yH2 extends Heuristica {
         int tomo_pasillos = Math.min(10, as); // Conjunto {0,1,2,3,4,5,6,7,8,9}
         int totalSubsets = 1 << tomo_pasillos; // 2^n subconjuntos
 
-        Cart rta = pasada(as);
+        EfficientCart rta = pasada(as);
 
         for (int mask = 1; mask < totalSubsets; mask++) {
             ArrayList<Integer> indices = new ArrayList<>();
@@ -49,7 +49,7 @@ public class BF5yH2 extends Heuristica {
             if (rta.getValue() > 0)
                     tope = Math.min((int) Math.floor(waveSizeUB / rta.getValue()), as);
             for (int sol = tomo_pasillos - 1; sol <= tope; ++sol) {
-                Cart actual = new Cart();
+                EfficientCart actual = new EfficientCart();
 
                 for (int p : indices)
                     actual.addAisle(aisles[p]);
@@ -70,6 +70,6 @@ public class BF5yH2 extends Heuristica {
             }
         }
 
-        return new ChallengeSolution(rta.my_orders, rta.my_aisles);
+        return getSolution(rta);
     }
 }
