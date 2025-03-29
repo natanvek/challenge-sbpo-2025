@@ -1,17 +1,16 @@
 package org.sbpo2025.challenge;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.sbpo2025.challenge.solvers.Ranking;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.HashSet;
 
-public abstract class ChallengeSolver {
-    protected final long MAX_RUNTIME = 600000; // milliseconds; 10 minutes
+public class ChallengeSolver {
+    private final long MAX_RUNTIME = 600000; // milliseconds; 10 minutes
 
     protected List<Map<Integer, Integer>> orders;
     protected List<Map<Integer, Integer>> aisles;
@@ -20,14 +19,21 @@ public abstract class ChallengeSolver {
     protected int waveSizeUB;
 
     public ChallengeSolver(
-            List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aisles, int nItems, int waveSizeLB, int waveSizeUB) {
+            List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aisles, int nItems, int waveSizeLB,
+            int waveSizeUB) {
         this.orders = orders;
         this.aisles = aisles;
         this.nItems = nItems;
         this.waveSizeLB = waveSizeLB;
         this.waveSizeUB = waveSizeUB;
     }
-    public abstract ChallengeSolution solve(StopWatch stopWatch);
+
+    public ChallengeSolution solve(StopWatch stopWatch) {
+        var heuristica = new Ranking(
+                orders, aisles, nItems, waveSizeLB, waveSizeUB);
+        
+        return heuristica.solve(stopWatch);
+    }
 
     /*
      * Get the remaining time in seconds
@@ -42,7 +48,6 @@ public abstract class ChallengeSolver {
         Set<Integer> selectedOrders = challengeSolution.orders();
         Set<Integer> visitedAisles = challengeSolution.aisles();
         if (selectedOrders == null || visitedAisles == null || selectedOrders.isEmpty() || visitedAisles.isEmpty()) {
-            System.out.println("nonFeasibleError: no orders or no aisles");
             return false;
         }
 
@@ -66,14 +71,12 @@ public abstract class ChallengeSolver {
         // Check if the total units picked are within bounds
         int totalUnits = Arrays.stream(totalUnitsPicked).sum();
         if (totalUnits < waveSizeLB || totalUnits > waveSizeUB) {
-            System.out.println("nonFeasibleError: out of bounds solution");
             return false;
         }
 
         // Check if the units picked do not exceed the units available
         for (int i = 0; i < nItems; i++) {
             if (totalUnitsPicked[i] > totalUnitsAvailable[i]) {
-                System.out.println("nonFeasibleError: element  i was picked more times than available");
                 return false;
             }
         }

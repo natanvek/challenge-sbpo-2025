@@ -1,5 +1,4 @@
 package org.sbpo2025.challenge;
-import org.sbpo2025.challenge.solvers.*;
 
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -8,16 +7,10 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 
 public class Challenge {
 
@@ -115,38 +108,21 @@ public class Challenge {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         // Start the stopwatch to track the running time
         StopWatch stopWatch = StopWatch.createStarted();
 
-
-        if (args.length != 3) {
-            System.out.println("Usage: java -jar target/ChallengeSBPO2025-1.0.jar <inputFilePath> <outputFilePath> <heuristicaName>");
+        if (args.length != 2) {
+            System.out.println("Usage: java -jar target/ChallengeSBPO2025-1.0.jar <inputFilePath> <outputFilePath>");
             return;
         }
-    
+
         Challenge challenge = new Challenge();
         challenge.readInput(args[0]);
-        
-        String solverName = args[2];
-        
-        Class<?> Heuristica = Class.forName(("org.sbpo2025.challenge.solvers." + solverName));
+        var challengeSolver = new ChallengeSolver(
+                challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB);
+        ChallengeSolution challengeSolution = challengeSolver.solve(stopWatch);
 
-        if (ChallengeSolver.class.isAssignableFrom(Heuristica)) {
-            // Crear una instancia del solver
-            Constructor<?> constructor = Heuristica.getConstructor(List.class, List.class, int.class, int.class, int.class);
-            ChallengeSolver solver = (ChallengeSolver) constructor.newInstance(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB);
-
-            ChallengeSolution challengeSolution = solver.solve(stopWatch);
-            challenge.writeOutput(challengeSolution, args[1]);
-        } else {
-            System.out.println(solverName + " is not a valid Solver class.");
-        }
-
-
-        stopWatch.stop();
-
-        Files.writeString(Path.of(args[1]), String.format("%.2f", ((double) stopWatch.getTime(TimeUnit.MILLISECONDS) / 60000)) + "", StandardOpenOption.APPEND);
-
+        challenge.writeOutput(challengeSolution, args[1]);
     }
 }

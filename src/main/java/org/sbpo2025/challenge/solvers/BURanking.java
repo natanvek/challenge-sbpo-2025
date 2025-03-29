@@ -81,8 +81,8 @@ public class BURanking extends Heuristica {
         // ----------------------------------------------------------------------------------
 
         // int registerSize = 1000;
-        int registerSize = calcRegisterSize(stopWatch, 2);
-        System.out.println("registerSize: " + registerSize);
+        int registerSize = calcRegisterSize(stopWatch, 3);
+        // System.out.println("registerSize: " + registerSize);
 
         // ----------------------------------------------------------------------------------
 
@@ -92,19 +92,11 @@ public class BURanking extends Heuristica {
 
         insertCart(rankings.get(0), new EfficientCart(), registerSize);
 
-
-        List<PriorityQueue<Heuristica.EfficientCart>> r_pasillo = new ArrayList<>();
-        for (int i = 0; i < nAisles; i++)
-            r_pasillo.add(new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems)));
-
-        // System.out.println("Pasillos: " + as);
-        // System.out.print("\rTopeActual: " + tope);
         Set<String> seenHashes = new HashSet<>();
-        for (int r = 0; r < tope; ++r) { // si vas de 0 a tope no funca
+        for (int r = 0; r < tope; ++r) { 
             for (EfficientCart m : rankings.get(r)) {
                 for (Aisle p : aisles) {
-                    if (m.hasAisle(p))
-                        continue;
+                    if (m.hasAisle(p)) continue;
 
                     EfficientCart copia = new EfficientCart(m);
                     copia.addAisle(p);
@@ -113,9 +105,10 @@ public class BURanking extends Heuristica {
                         MessageDigest md = MessageDigest.getInstance("SHA-256");
                         byte[] hash = md.digest(copia.my_aisles.stream().sorted().toString().getBytes());
                         String hashKey = Base64.getEncoder().encodeToString(hash);
-                        if (!seenHashes.add(hashKey))
+                        if (!seenHashes.add(hashKey)) {
+                            System.out.println("encontreee repetidosss");
                             continue;
-
+                        };
                     } catch (NoSuchAlgorithmException e) {
                         throw new RuntimeException(e);
                     }
@@ -125,13 +118,9 @@ public class BURanking extends Heuristica {
                     updateRta(copia);
 
                     insertCart(rankings.get(r+1), copia, registerSize);
-
-                    // for(Integer a : copia.my_aisles)
-                    // insertCart(r_pasillo[a], copia, registerSize);
                 }
 
             }
-
         }
 
         return getSolution();
