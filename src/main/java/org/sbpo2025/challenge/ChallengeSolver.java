@@ -1,7 +1,7 @@
 package org.sbpo2025.challenge;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.sbpo2025.challenge.solvers.Ranking;
+import org.sbpo2025.challenge.solvers.BothRanking;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +29,7 @@ public class ChallengeSolver {
     }
 
     public ChallengeSolution solve(StopWatch stopWatch) {
-        var heuristica = new Ranking(
+        var heuristica = new BothRanking(
                 orders, aisles, nItems, waveSizeLB, waveSizeUB);
         
         return heuristica.solve(stopWatch);

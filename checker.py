@@ -46,11 +46,10 @@ class WaveOrderPicking:
             selected_orders = [int(lines[i + 1].strip()) for i in range(num_orders)]
             num_aisles = int(lines[num_orders + 1].strip())
             visited_aisles = [int(lines[num_orders + 2 + i].strip()) for i in range(num_aisles)]
-            execution_time = lines[num_orders + num_aisles + 2]
 
         selected_orders = list(set(selected_orders))
         visited_aisles = list(set(visited_aisles))
-        return selected_orders, visited_aisles, execution_time
+        return selected_orders, visited_aisles
 
     def is_solution_feasible(self, selected_orders, visited_aisles):
         total_units_picked = 0
@@ -110,13 +109,12 @@ if __name__ == "__main__":
 
     wave_order_picking = WaveOrderPicking()
     wave_order_picking.read_input(sys.argv[1])
-    selected_orders, visited_aisles, execution_time = wave_order_picking.read_output(sys.argv[2])
+    selected_orders, visited_aisles= wave_order_picking.read_output(sys.argv[2])
 
     is_feasible = wave_order_picking.is_solution_feasible(selected_orders, visited_aisles)
     objective_value = wave_order_picking.compute_objective_function(selected_orders, visited_aisles)
 
     if is_feasible:
         print("Value:", '\033[38;5;226m' + str(f"{objective_value:.2f}") + "\033[0m", end=" | ")
-        print("Aisles:", '\033[38;5;111m' + str(len(visited_aisles)) + "\033[0m",end=" | ")
-        print("Execution Time:", '\033[38;5;10m' + str(execution_time) + "\033[0m"+"min")
+        print("Aisles:", '\033[38;5;111m' + str(len(visited_aisles)) + "\033[0m")
         

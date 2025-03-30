@@ -3,14 +3,13 @@ package org.sbpo2025.challenge.solvers; // Paquete correcto
 import org.sbpo2025.challenge.Heuristica;
 import org.sbpo2025.challenge.ChallengeSolution;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
 import java.util.*;
 
 import org.apache.commons.lang3.time.StopWatch;
 
-public class Ranking extends Heuristica {
-    public Ranking(List<Map<Integer, Integer>> _orders, List<Map<Integer, Integer>> _aisles, int _nItems,
+public class BothRanking extends Heuristica {
+    public BothRanking(List<Map<Integer, Integer>> _orders, List<Map<Integer, Integer>> _aisles, int _nItems,
             int _waveSizeLB,
             int _waveSizeUB) {
         super(_orders, _aisles, _nItems, _waveSizeLB, _waveSizeUB);
@@ -50,18 +49,6 @@ public class Ranking extends Heuristica {
         return (int)((minutos * 60 * 1e3) / (tope_por_fill * nAisles));
     }
 
-    private static final Set<String> seenHashes = new HashSet<>();
-    Boolean repeatedCase(Set<Aisle> s) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(s.stream().sorted().toString().getBytes());
-            String hashKey = Base64.getEncoder().encodeToString(hash);
-            return seenHashes.add(hashKey);
-        } catch (NoSuchAlgorithmException e) {
-            return false;
-        }
-    }
-
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {
         int[] pesosAisle = new int[nAisles];
@@ -79,8 +66,6 @@ public class Ranking extends Heuristica {
             }
         }
 
-        // ----------------------------------------------------------------------------------        
-
         Arrays.sort(orders, (o1, o2) -> Integer.compare(o2.size, o1.size));
         Arrays.sort(aisles, (a1, a2) -> Integer.compare(a2.size, a1.size));
         pasada();
@@ -92,10 +77,12 @@ public class Ranking extends Heuristica {
         for (int a = 0; a < nAisles; ++a)
             idToPos[aisles[a].id] = a;
 
+
         // ----------------------------------------------------------------------------------        
         
         // int registerSize = 500;
-        int registerSize = calcRegisterSize(stopWatch, 3);
+        int registerSize = Math.min(1500, calcRegisterSize(stopWatch, 1));
+        System.out.println("registerSize: "+ registerSize);
 
         // ----------------------------------------------------------------------------------
 
@@ -105,7 +92,7 @@ public class Ranking extends Heuristica {
 
         insertCart(rankings.get(0), new EfficientCart(), registerSize);
 
-        for (Aisle p : aisles)
+        for (Aisle p : aisles) 
             for (int r = tope - 1; r >= 0; --r) 
                 for (EfficientCart m : rankings.get(r)) {
                     EfficientCart copia = new EfficientCart(m);
@@ -113,22 +100,15 @@ public class Ranking extends Heuristica {
                     fill(copia);
                     updateRta(copia);
                     insertCart(rankings.get(r + 1), copia, registerSize);
-                }    
+                }
 
-
-        for (int i = 0; i <= tope; i++)
-            rankings.add(new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems)));
-
-        insertCart(rankings.get(0), new EfficientCart(), registerSize);
-
-        
         for (int r = 0; r < tope; ++r) 
             for (EfficientCart m : rankings.get(r)) 
                 for (Aisle p : aisles) {
                     if (m.hasAisle(p)) continue;
+
                     EfficientCart copia = new EfficientCart(m);
                     copia.addAisle(p);
-                    if(repeatedCase(copia.getAisles())) continue;
                     fill(copia);
                     updateRta(copia);
                     insertCart(rankings.get(r+1), copia, registerSize);
