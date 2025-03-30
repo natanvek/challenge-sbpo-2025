@@ -73,7 +73,7 @@ public class BothRanking extends Heuristica {
         pasada();
     }
 
-    void ranking(List<PriorityQueue<Heuristica.EfficientCart>> rankings, Set<String> seenHashes) {
+    void ranking(List<PriorityQueue<Heuristica.EfficientCart>> rankings /* , Set<String> seenHashes */) {
         for (Aisle p : aisles)
             for (int r = tope - 1; r >= 0; --r)
                 for (EfficientCart m : rankings.get(r)) {
@@ -95,7 +95,7 @@ public class BothRanking extends Heuristica {
 
     }
 
-    void bottomUpRanking(List<PriorityQueue<Heuristica.EfficientCart>> rankings, Set<String> seenHashes) {
+    void bottomUpRanking(List<PriorityQueue<Heuristica.EfficientCart>> rankings /*, Set<String> seenHashes */) {
         for (int r = 0; r < tope; ++r)
             for (EfficientCart m : rankings.get(r))
                 for (Aisle p : aisles) {
@@ -129,17 +129,17 @@ public class BothRanking extends Heuristica {
             rankings.add(new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems)));
 
         insertCart(rankings.get(0), new EfficientCart(), registerSize);
-        Set<String> seenHashes = new HashSet<>();
+        // Set<String> seenHashes = new HashSet<>();
 
         long ti = stopWatch.getNanoTime();
-        ranking(rankings, seenHashes);
-        bottomUpRanking(rankings, seenHashes);
+        ranking(rankings /* , seenHashes */);
+        bottomUpRanking(rankings /* , seenHashes */);
         long tiempoPorRegisterSize = (long) ((stopWatch.getNanoTime() - ti) / 1e6);
 
         for (int i = 1; i <= tope; i++)
             rankings.set(i, new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems)));
 
-        seenHashes = new HashSet<>();
+        // seenHashes = new HashSet<>();
 
         long minutosDeEjecucion = 8;
         registerSize = (long) ((minutosDeEjecucion * 60 * 1e3) / tiempoPorRegisterSize);
@@ -147,8 +147,8 @@ public class BothRanking extends Heuristica {
         System.out.println("registerSize: " + registerSize);
 
         if (registerSize > 1) {
-            ranking(rankings, seenHashes);
-            bottomUpRanking(rankings, seenHashes);
+            ranking(rankings /*, seenHashes  */);
+            bottomUpRanking(rankings /*, seenHashes  */);
         }
 
         return getSolution();
