@@ -9,8 +9,8 @@ import java.util.*;
 
 import org.apache.commons.lang3.time.StopWatch;
 
-public class BURanking extends Heuristica {
-    public BURanking(List<Map<Integer, Integer>> _orders, List<Map<Integer, Integer>> _aisles, int _nItems,
+public class BURH extends Heuristica {
+    public BURH(List<Map<Integer, Integer>> _orders, List<Map<Integer, Integer>> _aisles, int _nItems,
             int _waveSizeLB,
             int _waveSizeUB) {
         super(_orders, _aisles, _nItems, _waveSizeLB, _waveSizeUB);
@@ -109,18 +109,18 @@ public class BURanking extends Heuristica {
                     EfficientCart copia = new EfficientCart(m);
                     copia.addAisle(p);
 
-                    // try {
-                    //     MessageDigest md = MessageDigest.getInstance("SHA-256");
-                    //     byte[] hash = md.digest(copia.my_aisles.stream().sorted().toString().getBytes());
-                    //     String hashKey = Base64.getEncoder().encodeToString(hash);
-                    //     if (!seenHashes.add(hashKey)) {
-                    //         System.out.println("encontré repetidos");
-                    //         continue;
-                    //     }
+                    try {
+                        MessageDigest md = MessageDigest.getInstance("SHA-256");
+                        byte[] hash = md.digest(copia.my_aisles.stream().sorted().toString().getBytes());
+                        String hashKey = Base64.getEncoder().encodeToString(hash);
+                        if (!seenHashes.add(hashKey)) {
+                            System.out.println("encontré repetidos");
+                            continue;
+                        }
 
-                    // } catch (NoSuchAlgorithmException e) {
-                    //     throw new RuntimeException(e);
-                    // }
+                    } catch (NoSuchAlgorithmException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     fill(copia);
 
