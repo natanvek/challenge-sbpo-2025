@@ -23,7 +23,7 @@ public abstract class Heuristica extends ChallengeSolver {
         public Map<Integer, Integer> map_items;
         public int size;
 
-        // Constructor para inicializar Order
+        // Constructor para inicializar Aisle
         public Aisle(int _id, Map<Integer, Integer> _items, int _size) {
             this.id = _id;
             this.items = new ArrayList<>(_items.entrySet());
@@ -73,13 +73,13 @@ public abstract class Heuristica extends ChallengeSolver {
         for (int o = 0; o < _orders.size(); o++) {
             int t = 0;
             List<Map.Entry<Integer, Integer>> o_items = new ArrayList<>(_orders.get(o).entrySet());
-            double[] sabotea = new double[nItems];
+            // double[] sabotea = new double[nItems];
             boolean anda = true;
-            for (Map.Entry<Integer, Integer> entry : _orders.get(o).entrySet()) {
+            for (Map.Entry<Integer, Integer> entry : o_items) {
                 Integer elem = entry.getKey();
                 Integer cant = entry.getValue();
                 t += cant;
-                sabotea[elem] = 0;
+                // sabotea[elem] = 0;
                 int hay = 0;
                 for(Aisle a : aisles)
                     hay +=  Math.min(a.map_items.getOrDefault(elem, 0), cant);
@@ -87,7 +87,7 @@ public abstract class Heuristica extends ChallengeSolver {
                 if(hay < cant)
                     anda = false;
 
-                sabotea[elem] = (double) hay / cant;
+                // sabotea[elem] = (double) hay / cant;
             }
 
             // Collections.sort(o_items, (i1, i2) -> Double.compare(sabotea[i1.getKey()], sabotea[i2.getKey()]));
