@@ -19,8 +19,7 @@ public class ChallengeSolver {
     protected int waveSizeUB;
 
     public ChallengeSolver(
-            List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aisles, int nItems, int waveSizeLB,
-            int waveSizeUB) {
+            List<Map<Integer, Integer>> orders, List<Map<Integer, Integer>> aisles, int nItems, int waveSizeLB, int waveSizeUB) {
         this.orders = orders;
         this.aisles = aisles;
         this.nItems = nItems;
