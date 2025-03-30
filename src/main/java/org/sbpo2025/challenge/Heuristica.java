@@ -192,10 +192,10 @@ public abstract class Heuristica extends ChallengeSolver {
     
 
     public void updateRta(EfficientCart ec) {
-        EfficientCart copy = new EfficientCart(ec);
-        copy.removeRedundantAisles();
+        // EfficientCart copy = new EfficientCart(ec);
+        // copy.removeRedundantAisles();
         if(ec.cantItems >= waveSizeLB) {
-            rta.update(copy);
+            rta.update(ec);
             tope = Math.min(tope, rta.getTope());
         }
     }

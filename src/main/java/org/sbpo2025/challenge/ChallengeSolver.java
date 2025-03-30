@@ -1,7 +1,7 @@
 package org.sbpo2025.challenge;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.sbpo2025.challenge.solvers.BothRanking;
+import org.sbpo2025.challenge.solvers.*;
 
 import java.util.Arrays;
 import java.util.List;

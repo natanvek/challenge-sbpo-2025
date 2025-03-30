@@ -3,7 +3,8 @@ package org.sbpo2025.challenge.solvers; // Paquete correcto
 import org.sbpo2025.challenge.Heuristica;
 import org.sbpo2025.challenge.ChallengeSolution;
 
-
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -15,7 +16,7 @@ public class BothRanking extends Heuristica {
         super(_orders, _aisles, _nItems, _waveSizeLB, _waveSizeUB);
     }
 
-    public boolean insertCart(PriorityQueue<EfficientCart> queue, EfficientCart newCart, Integer regSize) {
+    public boolean insertCart(PriorityQueue<EfficientCart> queue, EfficientCart newCart, long regSize) {
         if (queue.size() < regSize) {
             queue.offer(newCart);
             return true;
@@ -30,27 +31,25 @@ public class BothRanking extends Heuristica {
         }
     }
 
-    int calcRegisterSize(StopWatch stopWatch, long minutos) {
+    long calcRegisterSize(StopWatch stopWatch, long minutos) {
         long ti = stopWatch.getNanoTime(), tiempo_iterando = 0, iteraciones = 0;
-        while(tiempo_iterando < 5e9) {
-            for(int i = 0; i < 100; ++ i) {
-                EfficientCart simulatingBest = new EfficientCart();
-                for(int r = 0; r < tope; ++r){
-                    EfficientCart estimatingRegisterSize = new EfficientCart(simulatingBest);
-                    simulatingBest.addAisle(aisles[r]);
-                    fill(estimatingRegisterSize);
-                    simulatingBest = estimatingRegisterSize;
-                }
-            }
-            tiempo_iterando = (stopWatch.getNanoTime() - ti);
-            iteraciones += 100;
+        EfficientCart ECWithTopeAisles = new EfficientCart();
+        for (int t = 0; t < tope; ++t)
+            ECWithTopeAisles.addAisle(aisles[t]);
+
+        for (; tiempo_iterando < 5e9; tiempo_iterando = (stopWatch.getNanoTime() - ti), ++iteraciones) {
+            EfficientCart copia = new EfficientCart(ECWithTopeAisles);
+            fill(copia);
         }
-        double tope_por_fill = (double) tiempo_iterando / (iteraciones * 1e6);
-        return (int)((minutos * 60 * 1e3) / (tope_por_fill * nAisles));
+        double t_fill = (double) tiempo_iterando / (iteraciones * 1e6);
+        long rs = (long) ((minutos * 60 * 1e4) / (t_fill * tope * nAisles));
+
+        return Math.max(Math.min(rs, 1500), 1);
     }
 
-    @Override
-    public ChallengeSolution solve(StopWatch stopWatch) {
+    long registerSize = 1;
+
+    void init() {
         int[] pesosAisle = new int[nAisles];
 
         for (Order o : orders) {
@@ -72,47 +71,85 @@ public class BothRanking extends Heuristica {
 
         Arrays.sort(aisles, (a1, a2) -> Integer.compare(pesosAisle[a2.id], pesosAisle[a1.id]));
         pasada();
+    }
 
-        int[] idToPos = new int[nAisles];
-        for (int a = 0; a < nAisles; ++a)
-            idToPos[aisles[a].id] = a;
+    void ranking(List<PriorityQueue<Heuristica.EfficientCart>> rankings, Set<String> seenHashes) {
+        for (Aisle p : aisles)
+            for (int r = tope - 1; r >= 0; --r)
+                for (EfficientCart m : rankings.get(r)) {
+                    EfficientCart copia = new EfficientCart(m);
+                    copia.addAisle(p);
+                    // try {
+                    //     MessageDigest md = MessageDigest.getInstance("SHA-256");
+                    //     byte[] hash = md.digest(copia.my_aisles.stream().sorted().toString().getBytes());
+                    //     String hashKey = Base64.getEncoder().encodeToString(hash);
+                    //     if (!seenHashes.add(hashKey))
+                    //         continue;
+                    // } catch (NoSuchAlgorithmException e) {
+                    // }
 
+                    fill(copia);
+                    updateRta(copia);
+                    insertCart(rankings.get(r + 1), copia, registerSize);
+                }
 
-        // ----------------------------------------------------------------------------------        
-        
-        // int registerSize = 500;
-        int registerSize = Math.min(1500, calcRegisterSize(stopWatch, 1));
-        System.out.println("registerSize: "+ registerSize);
+    }
 
-        // ----------------------------------------------------------------------------------
+    void bottomUpRanking(List<PriorityQueue<Heuristica.EfficientCart>> rankings, Set<String> seenHashes) {
+        for (int r = 0; r < tope; ++r)
+            for (EfficientCart m : rankings.get(r))
+                for (Aisle p : aisles) {
+                    if (m.hasAisle(p))
+                        continue;
+
+                    EfficientCart copia = new EfficientCart(m);
+                    copia.addAisle(p);
+
+                    // try {
+                    //     MessageDigest md = MessageDigest.getInstance("SHA-256");
+                    //     byte[] hash = md.digest(copia.my_aisles.stream().sorted().toString().getBytes());
+                    //     String hashKey = Base64.getEncoder().encodeToString(hash);
+                    //     if (!seenHashes.add(hashKey))
+                    //         continue;
+                    // } catch (NoSuchAlgorithmException e) {
+                    // }
+
+                    fill(copia);
+                    updateRta(copia);
+                    insertCart(rankings.get(r + 1), copia, registerSize);
+                }
+    }
+
+    @Override
+    public ChallengeSolution solve(StopWatch stopWatch) {
+        init();
 
         List<PriorityQueue<Heuristica.EfficientCart>> rankings = new ArrayList<>();
         for (int i = 0; i <= tope; i++)
             rankings.add(new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems)));
 
         insertCart(rankings.get(0), new EfficientCart(), registerSize);
+        Set<String> seenHashes = new HashSet<>();
 
-        for (Aisle p : aisles) 
-            for (int r = tope - 1; r >= 0; --r) 
-                for (EfficientCart m : rankings.get(r)) {
-                    EfficientCart copia = new EfficientCart(m);
-                    copia.addAisle(p);
-                    fill(copia);
-                    updateRta(copia);
-                    insertCart(rankings.get(r + 1), copia, registerSize);
-                }
+        long ti = stopWatch.getNanoTime();
+        ranking(rankings, seenHashes);
+        bottomUpRanking(rankings, seenHashes);
+        long tiempoPorRegisterSize = (long) ((stopWatch.getNanoTime() - ti) / 1e6);
 
-        for (int r = 0; r < tope; ++r) 
-            for (EfficientCart m : rankings.get(r)) 
-                for (Aisle p : aisles) {
-                    if (m.hasAisle(p)) continue;
+        for (int i = 1; i <= tope; i++)
+            rankings.set(i, new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems)));
 
-                    EfficientCart copia = new EfficientCart(m);
-                    copia.addAisle(p);
-                    fill(copia);
-                    updateRta(copia);
-                    insertCart(rankings.get(r+1), copia, registerSize);
-                }
+        seenHashes = new HashSet<>();
+
+        long minutosDeEjecucion = 8;
+        registerSize = (long) ((minutosDeEjecucion * 60 * 1e3) / tiempoPorRegisterSize);
+        registerSize = Math.min(registerSize, 1500);
+        System.out.println("registerSize: " + registerSize);
+
+        if (registerSize > 1) {
+            ranking(rankings, seenHashes);
+            bottomUpRanking(rankings, seenHashes);
+        }
 
         return getSolution();
     }
