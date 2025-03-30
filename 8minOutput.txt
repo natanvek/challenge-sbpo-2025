@@ -1,0 +1,184 @@
+(myenv) ~/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025$ ./ejecutar_checker.sh popo
+registerSize: 66
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0013.txt
+6.44
+registerSize: 1000
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0020.txt
+0.00
+registerSize: 1000
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0019.txt
+0.40
+registerSize: 424
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0007.txt
+4.06
+registerSize: 757
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0008.txt
+4.87
+registerSize: 105
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0010.txt
+6.88
+registerSize: 770
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0006.txt
+3.87
+registerSize: 1000
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0018.txt
+1.27
+registerSize: 1000
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0002.txt
+0.00
+registerSize: 1000
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0016.txt
+0.37
+registerSize: 186
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0015.txt
+7.98
+registerSize: 36
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0014.txt
+6.65
+registerSize: 1000
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0012.txt
+0.41
+registerSize: 1000
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0001.txt
+0.01
+registerSize: 1000
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0017.txt
+0.04
+registerSize: 126
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0011.txt
+7.33
+registerSize: 1000
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0003.txt
+0.05
+registerSize: 507
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0005.txt
+6.32
+registerSize: 1000
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0009.txt
+0.90
+registerSize: 1000
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/instance_0004.txt
+0.02
+Compiling code in /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025...
+Maven compilation successful.
+Running instance_0013.txt
+Running instance_0020.txt
+Running instance_0019.txt
+Running instance_0007.txt
+Running instance_0008.txt
+Running instance_0010.txt
+Running instance_0006.txt
+Running instance_0018.txt
+Running instance_0002.txt
+Running instance_0016.txt
+Running instance_0015.txt
+Running instance_0014.txt
+Running instance_0012.txt
+Running instance_0001.txt
+Running instance_0017.txt
+Running instance_0011.txt
+Running instance_0003.txt
+Running instance_0005.txt
+Running instance_0009.txt
+Running instance_0004.txt
+-------------------------------------
+Running instance_0001.txt
+Value: 15.00 | Aisles: 2
+-------------------------------------
+
+-------------------------------------
+Running instance_0002.txt
+Value: 2.00 | Aisles: 1
+-------------------------------------
+
+-------------------------------------
+Running instance_0003.txt
+Value: 12.00 | Aisles: 4
+-------------------------------------
+
+-------------------------------------
+Running instance_0004.txt
+Value: 3.50 | Aisles: 2
+-------------------------------------
+
+-------------------------------------
+Running instance_0005.txt
+Value: 177.88 | Aisles: 8
+-------------------------------------
+
+-------------------------------------
+Running instance_0006.txt
+Value: 691.00 | Aisles: 1
+-------------------------------------
+
+-------------------------------------
+Running instance_0007.txt
+Value: 392.25 | Aisles: 4
+-------------------------------------
+
+-------------------------------------
+Running instance_0008.txt
+Value: 162.94 | Aisles: 17
+-------------------------------------
+
+-------------------------------------
+Running instance_0009.txt
+Value: 4.42 | Aisles: 12
+-------------------------------------
+
+-------------------------------------
+Running instance_0010.txt
+Value: 16.44 | Aisles: 32
+-------------------------------------
+
+-------------------------------------
+Running instance_0011.txt
+Value: 16.85 | Aisles: 20
+-------------------------------------
+
+-------------------------------------
+Running instance_0012.txt
+Value: 11.25 | Aisles: 4
+-------------------------------------
+
+-------------------------------------
+Running instance_0013.txt
+Value: 117.38 | Aisles: 13
+-------------------------------------
+
+-------------------------------------
+Running instance_0014.txt
+Value: 181.64 | Aisles: 11
+-------------------------------------
+
+-------------------------------------
+Running instance_0015.txt
+Value: 149.33 | Aisles: 3
+-------------------------------------
+
+-------------------------------------
+Running instance_0016.txt
+Value: 85.00 | Aisles: 2
+-------------------------------------
+
+-------------------------------------
+Running instance_0017.txt
+Value: 36.50 | Aisles: 2
+-------------------------------------
+
+-------------------------------------
+Running instance_0018.txt
+Value: 117.20 | Aisles: 5
+-------------------------------------
+
+-------------------------------------
+Running instance_0019.txt
+Value: 202.00 | Aisles: 1
+-------------------------------------
+
+-------------------------------------
+Running instance_0020.txt
+Value: 5.00 | Aisles: 1
+-------------------------------------
+
+
