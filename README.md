@@ -5,10 +5,49 @@ In this repository, you will find the base code for the framework, documentation
 
 ## Change Log
 
+- **16-04-2025**: [Sprint phase results](results/sprint_phase.pdf) updated. See section [Challenge Results Explanation](#challenge-results-explanation) for more details.
+- **15-04-2025**: [Sprint phase results](results/sprint_phase.pdf) are now available.
+- **15-04-2025**: Dataset `B` is now available.
 - **05-03-2025**: Updated the challenge rules to clarify that, due to allowing a multithread environment, no seed for random generation will be provided.
 - **27-02-2025**: Updated the challenge rules to include specific details of the computer environment in which the challenge will be run.
 - **21-02-2025**: Corrected OR-Tools version to 9.11.
 - **17-01-2025**: Base framework code, documentation and dataset `A`.
+
+## Challenge Results Explanation
+
+### Understanding Your Score
+
+Below is a general explanation of the different scores you may see in the rankings (for a detailed explanation, please refer to the [challenge rules](docs/es_challenge_rules.pdf)):
+
+#### Positive Score
+
+A positive score indicates successful submissions that produced valid solutions, although there may be some instances that produced invalid solutions or errors.
+
+#### Zero Score
+
+Teams with a score of 0 could have encountered one or more of the following issues:
+
+- **Compilation Success, no valid solutions**: your code compiled successfully, but no solutions met the feasibility criteria across any test cases.
+- **Timeouts**: your program successfully compiled but exceeded the time limit (600 seconds) on the test instances.
+- **Empty output files**: your program ran but produced empty output files or failed to generate any output.
+- **Invalid Format**: your outputs did not follow the required format and could not be processed by the evaluation system.
+
+#### Negative Score
+
+Teams with a negative score typically encountered:
+
+- **Compilation errors**: the submitted code failed to compile using the standard Maven build process. Common causes include:
+    - Incompatible Java or library (e.g., CPLEX or OR-Tools) versions
+    - Missing files or classes
+    - Syntax errors
+    - References to libraries that weren't included in the submission
+    - Dependency issues
+
+- **Runtime errors**: the program compiled but encountered errors during execution, such as:
+    - Null pointer exceptions
+    - Array index out of bounds
+    - Class not found exceptions
+    - Other runtime exceptions
 
 ## Challenge Rules and Problem Description
 
@@ -35,7 +74,7 @@ Spanish and Portuguese versions of the challenge rules and problem description c
 
 ## Prerequisites
 
-- Java 11
+- Java 17
 - Maven
 - Python 3.8 or higher
 - CPLEX 22.11 (optional)
