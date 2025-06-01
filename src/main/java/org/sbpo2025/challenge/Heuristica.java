@@ -43,6 +43,7 @@ public abstract class Heuristica extends ChallengeSolver {
     protected int nItems;
     protected int tope;
     protected EfficientCart rta;
+    protected Threading.Pool workers = new Threading.Pool(5);
 
     public int[] available_inicial;
     public Set<Integer> aisles_iniciales = new HashSet<>();

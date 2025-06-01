@@ -74,50 +74,46 @@ public class BothRanking extends Heuristica {
     }
 
     void ranking(List<PriorityQueue<Heuristica.EfficientCart>> rankings, Set<String> seenHashes) {
-        for (Aisle p : aisles)
-            for (int r = tope - 1; r >= 0; --r)
+        for (Aisle p : aisles) {
+            for (int r = tope - 1; r >= 0; --r) {
                 for (EfficientCart m : rankings.get(r)) {
-                    EfficientCart copia = new EfficientCart(m);
-                    copia.addAisle(p);
-                    // try {
-                    //     MessageDigest md = MessageDigest.getInstance("SHA-256");
-                    //     byte[] hash = md.digest(copia.my_aisles.stream().sorted().toString().getBytes());
-                    //     String hashKey = Base64.getEncoder().encodeToString(hash);
-                    //     if (!seenHashes.add(hashKey))
-                    //         continue;
-                    // } catch (NoSuchAlgorithmException e) {
-                    // }
-
-                    fill(copia);
-                    updateRta(copia);
-                    insertCart(rankings.get(r + 1), copia, registerSize);
+                    final int rf = r;
+                    workers.run(() -> {
+                        EfficientCart copia = new EfficientCart(m);
+                        copia.addAisle(p);
+                        fill(copia);
+                        workers.aquireSharedMutex();
+                        updateRta(copia);
+                        insertCart(rankings.get(rf + 1), copia, registerSize);
+                        workers.releaseSharedMutex();
+                    });
                 }
-
+                workers.awaitAll();
+            }
+        }
     }
 
     void bottomUpRanking(List<PriorityQueue<Heuristica.EfficientCart>> rankings, Set<String> seenHashes) {
-        for (int r = 0; r < tope; ++r)
-            for (EfficientCart m : rankings.get(r))
+        for (int r = 0; r < tope; ++r) {
+            for (EfficientCart m : rankings.get(r)) {
                 for (Aisle p : aisles) {
-                    if (m.hasAisle(p))
-                        continue;
-
-                    EfficientCart copia = new EfficientCart(m);
-                    copia.addAisle(p);
-
-                    // try {
-                    //     MessageDigest md = MessageDigest.getInstance("SHA-256");
-                    //     byte[] hash = md.digest(copia.my_aisles.stream().sorted().toString().getBytes());
-                    //     String hashKey = Base64.getEncoder().encodeToString(hash);
-                    //     if (!seenHashes.add(hashKey))
-                    //         continue;
-                    // } catch (NoSuchAlgorithmException e) {
-                    // }
-
-                    fill(copia);
-                    updateRta(copia);
-                    insertCart(rankings.get(r + 1), copia, registerSize);
+                    final int rf = r;
+                    workers.run(() -> {
+                        if (m.hasAisle(p)) {
+                            return;
+                        }
+                        EfficientCart copia = new EfficientCart(m);
+                        copia.addAisle(p);
+                        fill(copia);
+                        workers.aquireSharedMutex();
+                        updateRta(copia);
+                        insertCart(rankings.get(rf + 1), copia, registerSize);
+                        workers.releaseSharedMutex();
+                    });
                 }
+                workers.awaitAll();
+            }
+        }
     }
 
     @Override
@@ -131,17 +127,18 @@ public class BothRanking extends Heuristica {
         insertCart(rankings.get(0), new EfficientCart(), registerSize);
         Set<String> seenHashes = new HashSet<>();
 
+        System.out.println("start");
         long ti = stopWatch.getNanoTime();
         ranking(rankings, seenHashes);
         bottomUpRanking(rankings, seenHashes);
         long tiempoPorRegisterSize = (long) ((stopWatch.getNanoTime() - ti) / 1e6);
-
+        System.out.println("first pass " + tiempoPorRegisterSize);
         for (int i = 1; i <= tope; i++)
             rankings.set(i, new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems)));
 
         seenHashes = new HashSet<>();
 
-        long minutosDeEjecucion = 8;
+        long minutosDeEjecucion = 1;
         registerSize = (long) ((minutosDeEjecucion * 60 * 1e3) / tiempoPorRegisterSize);
         registerSize = Math.min(registerSize, 1000);
         System.out.println("registerSize: " + registerSize);
@@ -150,7 +147,8 @@ public class BothRanking extends Heuristica {
             ranking(rankings, seenHashes);
             bottomUpRanking(rankings, seenHashes);
         }
-
+        System.out.println("done all");
+        workers.killAll();
         return getSolution();
     }
 }
