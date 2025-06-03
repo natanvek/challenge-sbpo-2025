@@ -141,7 +141,7 @@ public class BothRanking extends Heuristica {
 
         seenHashes = new HashSet<>();
 
-        long minutosDeEjecucion = 8;
+        long minutosDeEjecucion = 3;
         registerSize = (long) ((minutosDeEjecucion * 60 * 1e3) / tiempoPorRegisterSize);
         registerSize = Math.min(registerSize, 1000);
         System.out.println("registerSize: " + registerSize);
