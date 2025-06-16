@@ -40,17 +40,19 @@ static class Worker extends Thread {
 		while (!killThread) {
 			if (!aquire(waitUntilTaskSemaphore, 1)) {
 				manager.done(this.workerId, false);
-				this.kill();
 				return;
 			}
-			this.taskToRun.run();
+			if (this.taskToRun != null) {
+				this.taskToRun.run();
+			}
 			manager.done(this.workerId, true);
 		}
 	}
 
 	public void kill() {
+		this.taskToRun = null;
 		this.killThread = true;
-		this.interrupt();
+		waitUntilTaskSemaphore.release();
 	}
 
 	public void dispatch(Task t) {
@@ -87,7 +89,6 @@ static public class Pool {
 		if (status == false) {
 			throw new Error("WorkerError");
 		}
-		// System.out.println("@done:" + workerId);
 		this.availableWorkers.compareAndSet(workerId, 0, 1);
 		this.availableWorkersSemaphore.release();
 	}
@@ -96,7 +97,6 @@ static public class Pool {
 		aquire(availableWorkersSemaphore, 1);
 		for (int i = 0; i < this.workers.size(); ++i) {
 			if (this.availableWorkers.compareAndSet(i, 1, 0)) {
-				// System.out.println("@run:" + i);
 				this.workers.get(i).dispatch(t);
 				return;
 			}
@@ -113,7 +113,19 @@ static public class Pool {
 	public void awaitAll() {
 		aquire(availableWorkersSemaphore, workers.size());
 		this.availableWorkersSemaphore.release(workers.size());
-		// System.out.println("@awaitedall");
+	}
+
+	public void close() {
+		this.awaitAll();
+		this.killAll();
+		for (Worker worker : workers) {
+			try {
+				worker.join();
+			} catch (InterruptedException e) {
+				System.out.println("CaughtJoinError");
+				continue;
+			}
+		}
 	}
 }
 }

@@ -5,22 +5,33 @@ import java.util.*;
 
 public class Inventory {
     // Arrays estáticos compartidos por todas las instancias de la clase
-    private static int[] available; // Array para los items disponibles
-    private static int[] modifiedDate; // Array para las fechas de modificación
-    private static int currentDate = 1; // Fecha global para todos
+    private int[] available; // Array para los items disponibles
+    private int[] modifiedDate; // Array para las fechas de modificación
+    private int currentDate = 1; // Fecha global para todos
 
     // private Map<Integer, Integer> available;
 
-    public static void initializeStaticVar(int nItems) {
+    Inventory(int nItems) {
         available = new int[nItems]; // Inicializa el array solo una vez
         modifiedDate = new int[nItems]; // Inicializa el array de fechas solo una vez
     }
+    
+    Inventory(Inventory otro) {
+        int nItems = otro.available.length;
+        available = new int[nItems];
+        modifiedDate = new int[nItems];
+        for (int i = 0; i < nItems; ++i) {
+            available[i] = otro.available[i];
+            modifiedDate[i] = otro.modifiedDate[i];
+        }
+        currentDate = otro.currentDate;
+    }
 
-    public static void reset() {
+    public void reset() {
         ++currentDate;
     }
 
-    public static boolean checkAndRemove(List<Map.Entry<Integer, Integer>> m) {
+    public boolean checkAndRemove(List<Map.Entry<Integer, Integer>> m) {
         for (Map.Entry<Integer, Integer> entry : m) {
             int elem = entry.getKey(), cant = entry.getValue();
             if(modifiedDate[elem] < currentDate) {
@@ -39,7 +50,7 @@ public class Inventory {
         return true;
     }
 
-    public static void addAisle(Aisle a) {
+    public void addAisle(Aisle a) {
         for (Map.Entry<Integer, Integer> entry : a.items){
             if(modifiedDate[entry.getKey()] < currentDate) 
                 available[entry.getKey()] = 0;

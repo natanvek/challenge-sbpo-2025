@@ -118,6 +118,7 @@ public class BothRanking extends Heuristica {
 
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {
+        long tii = stopWatch.getNanoTime();
         init();
 
         List<PriorityQueue<Heuristica.EfficientCart>> rankings = new ArrayList<>();
@@ -127,28 +128,30 @@ public class BothRanking extends Heuristica {
         insertCart(rankings.get(0), new EfficientCart(), registerSize);
         Set<String> seenHashes = new HashSet<>();
 
-        System.out.println("start");
         long ti = stopWatch.getNanoTime();
         ranking(rankings, seenHashes);
         bottomUpRanking(rankings, seenHashes);
         long tiempoPorRegisterSize = (long) ((stopWatch.getNanoTime() - ti) / 1e6);
-        System.out.println("first pass " + tiempoPorRegisterSize);
         for (int i = 1; i <= tope; i++)
             rankings.set(i, new PriorityQueue<>(Comparator.comparingInt(EfficientCart::getCantItems)));
 
         seenHashes = new HashSet<>();
 
-        long minutosDeEjecucion = 1;
+        long minutosDeEjecucion = 8;
         registerSize = (long) ((minutosDeEjecucion * 60 * 1e3) / tiempoPorRegisterSize);
         registerSize = Math.min(registerSize, 1000);
         System.out.println("registerSize: " + registerSize);
-
         if (registerSize > 1) {
+            ti = stopWatch.getNanoTime();
             ranking(rankings, seenHashes);
+            System.out.println("ranking time: " + (long) (stopWatch.getNanoTime() - ti));
+            ti = stopWatch.getNanoTime();
             bottomUpRanking(rankings, seenHashes);
+            System.out.println("bu time: " + (long) (stopWatch.getNanoTime() - ti));
         }
-        System.out.println("done all");
-        workers.killAll();
+        
+        workers.close();
+        System.out.println("complete time: " + (long) (stopWatch.getNanoTime() - tii));
         return getSolution();
     }
 }
