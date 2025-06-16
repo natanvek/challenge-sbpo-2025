@@ -29,7 +29,7 @@ public class ChallengeSolver {
     }
 
     public ChallengeSolution solve(StopWatch stopWatch) {
-        var heuristica = new BothRanking(
+        var heuristica = new CPLEX(
                 orders, aisles, nItems, waveSizeLB, waveSizeUB);
         
         return heuristica.solve(stopWatch);

@@ -20,8 +20,9 @@ public class Inventory {
         ++currentDate;
     }
 
-    public static boolean checkAndRemove(List<Map.Entry<Integer, Integer>> m) {
-        for (Map.Entry<Integer, Integer> entry : m) {
+    public static boolean checkAndRemove(Map<Integer, Integer> m) {
+
+        for (Map.Entry<Integer, Integer> entry : m.entrySet()) {
             int elem = entry.getKey(), cant = entry.getValue();
             if(modifiedDate[elem] < currentDate) {
                 modifiedDate[elem] = currentDate;
@@ -31,7 +32,7 @@ public class Inventory {
             if (available[elem] < cant)
                 return false;
         }
-        for (Map.Entry<Integer, Integer> entry : m) {
+        for (Map.Entry<Integer, Integer> entry : m.entrySet()) {
             int elem = entry.getKey(), cant = entry.getValue();
             available[elem] -= cant;
         }
@@ -40,7 +41,7 @@ public class Inventory {
     }
 
     public static void addAisle(Aisle a) {
-        for (Map.Entry<Integer, Integer> entry : a.items){
+        for (Map.Entry<Integer, Integer> entry : a.items.entrySet()){
             if(modifiedDate[entry.getKey()] < currentDate) 
                 available[entry.getKey()] = 0;
                 
