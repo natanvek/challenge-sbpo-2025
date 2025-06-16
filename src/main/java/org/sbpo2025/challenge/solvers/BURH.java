@@ -60,8 +60,8 @@ public class BURH extends Heuristica {
             for (Aisle p : aisles) {
                 int ocupa = 0;
 
-                for (Map.Entry<Integer, Integer> entry : o.items)
-                    ocupa += Math.min(p.map_items.getOrDefault(entry.getKey(), 0).intValue(), entry.getValue());
+                for (Map.Entry<Integer, Integer> entry : o.items.entrySet()) 
+                    ocupa += Math.min(p.items.getOrDefault(entry.getKey(), 0).intValue(), entry.getValue());
 
                 pesosAisle[p.id] += ocupa;
             }

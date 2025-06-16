@@ -6,28 +6,26 @@ public abstract class Heuristica extends ChallengeSolver {
 
     protected static class Order {
         public int id;
-        public ArrayList<Map.Entry<Integer, Integer>> items;
+        public Map<Integer, Integer> items;
         public int size;
 
         // Constructor para inicializar Order
-        public Order(int _id, List<Map.Entry<Integer, Integer>> _items, int _size) {
+        public Order(int _id, Map<Integer, Integer> _items, int _size) {
             this.id = _id;
-            this.items = new ArrayList<>(_items);
+            this.items = _items;
             this.size = _size;
         }
     }
 
     protected static class Aisle {
         public int id;
-        public ArrayList<Map.Entry<Integer, Integer>> items;
-        public Map<Integer, Integer> map_items;
+        public Map<Integer, Integer> items;
         public int size;
 
         // Constructor para inicializar Order
         public Aisle(int _id, Map<Integer, Integer> _items, int _size) {
             this.id = _id;
-            this.items = new ArrayList<>(_items.entrySet());
-            this.map_items = _items;
+            this.items = _items;
             this.size = _size;
         }
     }
@@ -35,9 +33,9 @@ public abstract class Heuristica extends ChallengeSolver {
     protected Order[] orders;
     protected Aisle[] aisles;
     protected Aisle[] idToAisle;
-    
+
     protected Aisle[] aisles_sorted;
-    
+
     protected int nOrders;
     protected int nAisles;
     protected int nItems;
@@ -68,11 +66,9 @@ public abstract class Heuristica extends ChallengeSolver {
         Arrays.sort(aisles_sorted, (a1, a2) -> Integer.compare(a1.size, a2.size));
 
         List<Order> ordersh_aux = new ArrayList<>();
-        
-        
+
         for (int o = 0; o < _orders.size(); o++) {
             int t = 0;
-            List<Map.Entry<Integer, Integer>> o_items = new ArrayList<>(_orders.get(o).entrySet());
             double[] sabotea = new double[nItems];
             boolean anda = true;
             for (Map.Entry<Integer, Integer> entry : _orders.get(o).entrySet()) {
@@ -81,20 +77,21 @@ public abstract class Heuristica extends ChallengeSolver {
                 t += cant;
                 sabotea[elem] = 0;
                 int hay = 0;
-                for(Aisle a : aisles)
-                    hay +=  Math.min(a.map_items.getOrDefault(elem, 0), cant);
+                for (Aisle a : aisles)
+                    hay += Math.min(a.items.getOrDefault(elem, 0), cant);
 
-                if(hay < cant)
+                if (hay < cant)
                     anda = false;
 
                 sabotea[elem] = (double) hay / cant;
             }
 
-            // Collections.sort(o_items, (i1, i2) -> Double.compare(sabotea[i1.getKey()], sabotea[i2.getKey()]));
+            // Collections.sort(o_items, (i1, i2) -> Double.compare(sabotea[i1.getKey()],
+            // sabotea[i2.getKey()]));
 
-            if(t <= waveSizeUB && anda)
-                ordersh_aux.add(new Order(o, o_items, t));
-            
+            // if(t <= waveSizeUB && anda) ojo con esto que me descuajeringa el id
+            ordersh_aux.add(new Order(o, _orders.get(o), t));
+
         }
 
         orders = ordersh_aux.toArray(new Order[0]);
@@ -111,7 +108,6 @@ public abstract class Heuristica extends ChallengeSolver {
         public Set<Aisle> my_aisles = new HashSet<>();
         public int cantItems = 0;
 
-
         public int aisleCount() {
             return my_aisles.size();
         }
@@ -119,7 +115,6 @@ public abstract class Heuristica extends ChallengeSolver {
         public boolean hasAisle(Aisle a) {
             return my_aisles.contains(a);
         }
-
 
         public Set<Aisle> getAisles() {
             return my_aisles;
@@ -135,7 +130,8 @@ public abstract class Heuristica extends ChallengeSolver {
             copy(otro);
         }
 
-        public EfficientCart() {}
+        public EfficientCart() {
+        }
 
         public double getValue() {
             if (aisleCount() + aisles_iniciales.size() == 0)
@@ -154,9 +150,9 @@ public abstract class Heuristica extends ChallengeSolver {
         }
 
         public boolean update(EfficientCart otro) {
-            if(getValue() >= otro.getValue())
+            if (getValue() >= otro.getValue())
                 return false;
-            
+
             cantItems = otro.cantItems;
             my_aisles = otro.my_aisles;
             return true;
@@ -178,6 +174,20 @@ public abstract class Heuristica extends ChallengeSolver {
                 Inventory.addAisle(a);
         }
 
+        public Set<Order> getOrders() {
+            Set<Order> rta_orders = new HashSet<>();
+
+            setAvailable();
+
+            for (Order o : orders)
+                if (getCantItems() + o.size <= waveSizeUB && Inventory.checkAndRemove(o.items)) {
+                    rta_orders.add(o);
+                    addOrder(o);
+                }
+
+            return rta_orders;
+        }
+
         // asegurate de haber ejecutado resetAisles antes
 
         // asegurate de llamarlo después de fill
@@ -189,12 +199,10 @@ public abstract class Heuristica extends ChallengeSolver {
         }
     }
 
-    
-
     public void updateRta(EfficientCart ec) {
         EfficientCart copy = new EfficientCart(ec);
         copy.removeRedundantAisles();
-        if(ec.cantItems >= waveSizeLB) {
+        if (ec.cantItems >= waveSizeLB) {
             rta.update(copy);
             tope = Math.min(tope, rta.getTope());
         }
@@ -208,12 +216,10 @@ public abstract class Heuristica extends ChallengeSolver {
     }
 
     protected void pasada() {
-        EfficientCart anterior = new EfficientCart();
+        EfficientCart actual = new EfficientCart();
         for (int sol = 0; sol < tope; ++sol) {
-            EfficientCart actual = new EfficientCart(anterior);
             actual.addAisle(aisles[sol]);
             fill(actual);
-            actual.removeRedundantAisles();
             updateRta(actual);
         }
     }
@@ -227,7 +233,7 @@ public abstract class Heuristica extends ChallengeSolver {
             rta_aisles.add(a.id);
 
         for (Order o : orders)
-            if (rta.getCantItems() + o.size <= waveSizeUB && Inventory.checkAndRemove(o.items)){
+            if (rta.getCantItems() + o.size <= waveSizeUB && Inventory.checkAndRemove(o.items)) {
                 rta_orders.add(o.id);
                 rta.addOrder(o);
             }

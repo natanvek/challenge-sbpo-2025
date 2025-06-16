@@ -1,3 +1,4 @@
+import os
 import numpy as np
 
 class WaveOrderPicking:
@@ -38,15 +39,18 @@ class WaveOrderPicking:
             # print("UB = " + str(self.wave_size_ub))
 
     def read_output(self, output_file_path):
+
         with open(output_file_path, 'r') as file:
             lines = file.readlines()
             if not lines:  # Verifica si la lista está vacía
-                raise ValueError("No agregaste la nueva heuristica a Challenge, tipeaste mal el nombre o hubo un error en la ejecución")
+                print("\033[38;5;196mSolution does not exist\033[0m")
+                sys.exit(1)
+                
             num_orders = int(lines[0].strip())
             selected_orders = [int(lines[i + 1].strip()) for i in range(num_orders)]
             num_aisles = int(lines[num_orders + 1].strip())
             visited_aisles = [int(lines[num_orders + 2 + i].strip()) for i in range(num_aisles)]
-            execution_time = lines[num_orders + num_aisles + 2]
+            execution_time = lines[num_orders + num_aisles + 2] if num_orders + num_aisles + 2 < len(lines) else 0
 
         selected_orders = list(set(selected_orders))
         visited_aisles = list(set(visited_aisles))
@@ -110,6 +114,11 @@ if __name__ == "__main__":
 
     wave_order_picking = WaveOrderPicking()
     wave_order_picking.read_input(sys.argv[1])
+    if not os.path.exists(sys.argv[2]):
+        print("\033[38;5;196mSolution does not exist\033[0m")
+        sys.exit(1)
+
+
     selected_orders, visited_aisles, execution_time = wave_order_picking.read_output(sys.argv[2])
 
     is_feasible = wave_order_picking.is_solution_feasible(selected_orders, visited_aisles)

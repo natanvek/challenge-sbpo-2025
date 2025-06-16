@@ -5,13 +5,13 @@ import argparse
 import platform
 
 # Paths to the libraries
-CPLEX_PATH = "$HOME/CPLEX_Studio2211/opl/bin/arm64_osx/"
+CPLEX_PATH = "/opt/ibm/ILOG/CPLEX_Studio2212/opl/bin/x86-64_linux"
 OR_TOOLS_PATH = "$HOME/Documents/or-tools/build/lib/"
 
-USE_CPLEX = False
+USE_CPLEX = True
 USE_OR_TOOLS = False
 
-MAX_RUNNING_TIME = "605s"
+MAX_RUNNING_TIME = "1605s"
 
 def compile_code(source_folder):
     print(f"Compiling code in {source_folder}...")

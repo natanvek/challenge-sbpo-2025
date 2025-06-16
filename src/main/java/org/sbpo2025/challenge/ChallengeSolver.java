@@ -3,12 +3,10 @@ package org.sbpo2025.challenge;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.HashSet;
 
 public abstract class ChallengeSolver {
     protected final long MAX_RUNTIME = 600000; // milliseconds; 10 minutes

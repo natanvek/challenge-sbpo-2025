@@ -59,8 +59,8 @@ public class BothRanking extends Heuristica {
             for (Aisle p : aisles) {
                 int ocupa = 0;
 
-                for (Map.Entry<Integer, Integer> entry : o.items)
-                    ocupa += Math.min(p.map_items.getOrDefault(entry.getKey(), 0).intValue(), entry.getValue());
+                for (Map.Entry<Integer, Integer> entry : o.items.entrySet())
+                    ocupa += Math.min(p.items.getOrDefault(entry.getKey(), 0).intValue(), entry.getValue());
 
                 pesosAisle[p.id] += ocupa;
             }
@@ -81,7 +81,7 @@ public class BothRanking extends Heuristica {
         // ----------------------------------------------------------------------------------        
         
         // int registerSize = 500;
-        int registerSize = calcRegisterSize(stopWatch, 1);
+        int registerSize = Math.max(1, calcRegisterSize(stopWatch, 8));
         System.out.println("registerSize: "+ registerSize);
 
         // ----------------------------------------------------------------------------------
@@ -114,6 +114,9 @@ public class BothRanking extends Heuristica {
                     insertCart(rankings.get(r+1), copia, registerSize);
                 }
 
+        System.out.println("Tope: " + tope);
+        System.out.println("nAisles: " + nAisles);
+        System.out.println("aislesInSolution: " + rta.getAisles().size());
         return getSolution();
     }
 }
