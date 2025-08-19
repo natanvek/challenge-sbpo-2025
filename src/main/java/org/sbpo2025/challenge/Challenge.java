@@ -1,4 +1,5 @@
 package org.sbpo2025.challenge;
+
 import org.sbpo2025.challenge.solvers.*;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -11,13 +12,13 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
 
 public class Challenge {
 
@@ -60,7 +61,8 @@ public class Challenge {
         }
     }
 
-    private void readItemQuantityPairs(BufferedReader reader, int nLines, List<Map<Integer, Integer>> orders) throws IOException {
+    private void readItemQuantityPairs(BufferedReader reader, int nLines, List<Map<Integer, Integer>> orders)
+            throws IOException {
         String line;
         for (int orderIndex = 0; orderIndex < nLines; orderIndex++) {
             line = reader.readLine();
@@ -119,23 +121,35 @@ public class Challenge {
         // Start the stopwatch to track the running time
         StopWatch stopWatch = StopWatch.createStarted();
 
-
         if (args.length != 3) {
-            System.out.println("Usage: java -jar target/ChallengeSBPO2025-1.0.jar <inputFilePath> <outputFilePath> <heuristicaName>");
+            System.out.println(
+                    "Usage: java -jar target/ChallengeSBPO2025-1.0.jar <inputFilePath> <outputFilePath> <heuristicaName>");
             return;
         }
-    
+        String inputFileString = args[0];
+
+        Path inputFile = Paths.get(inputFileString);
+        int nameCount = inputFile.getNameCount();
+
+        Path lastTwo = inputFile.subpath(nameCount - 2, nameCount);
+        
+        System.out.println("-----------------------------");
+        System.out.println("Ejecutando " + lastTwo + " con el solver " + args[2]);
+        System.out.println("-----------------------------");
+
         Challenge challenge = new Challenge();
         challenge.readInput(args[0]);
-        
+
         String solverName = args[2];
-        
+
         Class<?> Heuristica = Class.forName(("org.sbpo2025.challenge.solvers." + solverName));
 
         if (ChallengeSolver.class.isAssignableFrom(Heuristica)) {
             // Crear una instancia del solver
-            Constructor<?> constructor = Heuristica.getConstructor(List.class, List.class, int.class, int.class, int.class);
-            ChallengeSolver solver = (ChallengeSolver) constructor.newInstance(challenge.orders, challenge.aisles, challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB);
+            Constructor<?> constructor = Heuristica.getConstructor(List.class, List.class, int.class, int.class,
+                    int.class);
+            ChallengeSolver solver = (ChallengeSolver) constructor.newInstance(challenge.orders, challenge.aisles,
+                    challenge.nItems, challenge.waveSizeLB, challenge.waveSizeUB);
 
             ChallengeSolution challengeSolution = solver.solve(stopWatch);
             challenge.writeOutput(challengeSolution, args[1]);
@@ -143,10 +157,11 @@ public class Challenge {
             System.out.println(solverName + " is not a valid Solver class.");
         }
 
-
         stopWatch.stop();
 
-        Files.writeString(Path.of(args[1]), String.format("%.2f", ((double) stopWatch.getTime(TimeUnit.MILLISECONDS) / 60000)) + "", StandardOpenOption.APPEND);
+        Files.writeString(Path.of(args[1]),
+                String.format("%.2f", ((double) stopWatch.getTime(TimeUnit.MILLISECONDS) / 60000)) + "",
+                StandardOpenOption.APPEND);
 
     }
 }

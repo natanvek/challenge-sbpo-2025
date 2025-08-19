@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public abstract class ChallengeSolver {
-    protected final long MAX_RUNTIME = 600000; // milliseconds; 10 minutes
+    protected final long MAX_RUNTIME = 60000 * 10; // milliseconds; 10 minutes
 
     protected List<Map<Integer, Integer>> orders;
     protected List<Map<Integer, Integer>> aisles;

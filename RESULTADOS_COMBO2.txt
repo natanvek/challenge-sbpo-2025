@@ -1,0 +1,861 @@
+-----------------------------
+Ejecutando b/instance_0003.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 138.75
+registerSize: 906
+nAisles inicial: 164
+tope inicial: 14
+nOrders inicial: 2070
+nAislesCP: 5
+Solucion Ranking: 149.6
+topSizes: [4, 5, 6, 7, 8]
+aislesVan: 10 ordersVan: 152
+aisleRange: 4.0 <= nAislesCP <= 8.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:03:20
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+Tiempo transcurrido: 00:04:03
+la solucion hallada es optima
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0003.txt
+-----------------------------
+Ejecutando b/instance_0005.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 340.3333333333333
+registerSize: 541
+nAisles inicial: 179
+tope inicial: 7
+nOrders inicial: 6468
+nAislesCP: 3
+Solucion Ranking: 368.0
+topSizes: [3, 4, 5, 6, 7]
+aislesVan: 9 ordersVan: 1776
+aisleRange: 3.0 <= nAislesCP <= 7.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:01:56
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+Tiempo transcurrido: 00:02:02
+la solucion hallada es optima
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0005.txt
+-----------------------------
+Ejecutando b/instance_0004.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 143.76923076923077
+registerSize: 523
+nAisles inicial: 163
+tope inicial: 17
+nOrders inicial: 2448
+nAislesCP: 17
+Solucion Ranking: 155.76470588235293
+topSizes: [13, 14, 15, 16, 17]
+aislesVan: 23 ordersVan: 620
+aisleRange: 13.0 <= nAislesCP <= 17.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:03:10
+encontre solucion nAislesCP: 17.0 rta: 155.8235294117647
+-----------------------------
+Tiempo transcurrido: 00:03:10
+encontre solucion nAislesCP: 17.0 rta: 155.88235294117646
+-----------------------------
+Tiempo transcurrido: 00:03:10
+encontre solucion nAislesCP: 17.0 rta: 155.94117647058823
+-----------------------------
+Tiempo transcurrido: 00:03:11
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+me quede sin tiempo y no halle solucion mejor
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0004.txt
+-----------------------------
+Ejecutando b/instance_0007.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 108.0
+registerSize: 1000
+nAisles inicial: 165
+tope inicial: 7
+nOrders inicial: 1841
+nAislesCP: 1
+Solucion Ranking: 108.0
+topSizes: [1, 2, 3, 4, 5]
+aislesVan: 10 ordersVan: 611
+aisleRange: 1.0 <= nAislesCP <= 5.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:00:44
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+Tiempo transcurrido: 00:00:45
+la solucion hallada es optima
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0007.txt
+-----------------------------
+Ejecutando b/instance_0013.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 706.7
+registerSize: 9
+nAisles inicial: 483
+tope inicial: 25
+nOrders inicial: 38214
+nAislesCP: 9
+Solucion Ranking: 756.8888888888889
+topSizes: [9, 10, 11, 12, 13]
+aislesVan: 17 ordersVan: 9098
+aisleRange: 9.0 <= nAislesCP <= 13.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:03:04
+encontre solucion nAislesCP: 9.0 rta: 757.0
+-----------------------------
+Tiempo transcurrido: 00:03:10
+encontre solucion nAislesCP: 9.0 rta: 757.1111111111111
+-----------------------------
+Tiempo transcurrido: 00:03:21
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+me quede sin tiempo y no halle solucion mejor
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0013.txt
+-----------------------------
+Ejecutando b/instance_0009.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 67.70588235294117
+registerSize: 49
+nAisles inicial: 417
+tope inicial: 38
+nOrders inicial: 5581
+nAislesCP: 14
+Solucion Ranking: 82.5
+topSizes: [14, 15, 16, 17, 18]
+aislesVan: 20 ordersVan: 1243
+aisleRange: 14.0 <= nAislesCP <= 18.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:02:38
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+Tiempo transcurrido: 00:02:56
+la solucion hallada es optima
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0009.txt
+-----------------------------
+Ejecutando b/instance_0001.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 631.5
+registerSize: 392
+nAisles inicial: 185
+tope inicial: 6
+nOrders inicial: 11321
+nAislesCP: 2
+Solucion Ranking: 631.5
+topSizes: [2, 3, 4, 5, 6]
+aislesVan: 9 ordersVan: 3438
+aisleRange: 2.0 <= nAislesCP <= 6.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:02:15
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+Tiempo transcurrido: 00:02:24
+la solucion hallada es optima
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0001.txt
+-----------------------------
+Ejecutando b/instance_0011.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 893.9
+registerSize: 9
+nAisles inicial: 482
+tope inicial: 21
+nOrders inicial: 45112
+nAislesCP: 10
+Solucion Ranking: 898.7
+topSizes: [10, 11, 12, 13, 14]
+aislesVan: 20 ordersVan: 12731
+aisleRange: 10.0 <= nAislesCP <= 14.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:03:31
+encontre solucion nAislesCP: 10.0 rta: 898.8
+-----------------------------
+Tiempo transcurrido: 00:03:57
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+me quede sin tiempo y no halle solucion mejor
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0011.txt
+-----------------------------
+Ejecutando b/instance_0015.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 134.05555555555554
+registerSize: 17
+nAisles inicial: 398
+tope inicial: 44
+nOrders inicial: 11541
+nAislesCP: 15
+Solucion Ranking: 163.53333333333333
+topSizes: [15, 16, 17, 18, 19]
+aislesVan: 25 ordersVan: 3073
+aisleRange: 15.0 <= nAislesCP <= 19.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:02:24
+encontre solucion nAislesCP: 15.0 rta: 163.6
+-----------------------------
+Tiempo transcurrido: 00:02:26
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+Tiempo transcurrido: 00:07:39
+encontre solucion nAislesCP: 14.0 rta: 165.92857142857142
+-----------------------------
+Tiempo transcurrido: 00:07:41
+encontre solucion nAislesCP: 14.0 rta: 166.0
+-----------------------------
+Tiempo transcurrido: 00:07:43
+encontre solucion nAislesCP: 14.0 rta: 166.07142857142858
+-----------------------------
+Tiempo transcurrido: 00:07:45
+encontre solucion nAislesCP: 14.0 rta: 166.14285714285714
+-----------------------------
+Tiempo transcurrido: 00:09:43
+la solucion hallada es optima
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0015.txt
+-----------------------------
+Ejecutando b/instance_0006.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 78.85714285714286
+registerSize: 218
+nAisles inicial: 165
+tope inicial: 42
+nOrders inicial: 1857
+nAislesCP: 35
+Solucion Ranking: 83.88571428571429
+topSizes: [31, 34, 35, 36, 37]
+aislesVan: 44 ordersVan: 701
+aisleRange: 31.0 <= nAislesCP <= 37.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:03:27
+encontre solucion nAislesCP: 35.0 rta: 83.91428571428571
+-----------------------------
+Tiempo transcurrido: 00:03:28
+encontre solucion nAislesCP: 36.0 rta: 83.97222222222223
+-----------------------------
+Tiempo transcurrido: 00:03:28
+encontre solucion nAislesCP: 36.0 rta: 84.0
+-----------------------------
+Tiempo transcurrido: 00:03:28
+encontre solucion nAislesCP: 36.0 rta: 84.02777777777777
+-----------------------------
+Tiempo transcurrido: 00:03:32
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+me quede sin tiempo y no halle solucion mejor
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0006.txt
+-----------------------------
+Ejecutando b/instance_0012.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 529.9166666666666
+registerSize: 14
+nAisles inicial: 483
+tope inicial: 22
+nOrders inicial: 28263
+nAislesCP: 11
+Solucion Ranking: 567.6363636363636
+topSizes: [11, 12, 13, 14, 15]
+aislesVan: 24 ordersVan: 9254
+aisleRange: 11.0 <= nAislesCP <= 15.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:02:55
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+me quede sin tiempo y no halle solucion mejor
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0012.txt
+-----------------------------
+Ejecutando b/instance_0008.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 217.8181818181818
+registerSize: 33
+nAisles inicial: 398
+tope inicial: 26
+nOrders inicial: 12334
+nAislesCP: 10
+Solucion Ranking: 226.8
+topSizes: [10, 11, 12, 13, 14]
+aislesVan: 18 ordersVan: 3254
+aisleRange: 10.0 <= nAislesCP <= 14.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:02:51
+encontre solucion nAislesCP: 10.0 rta: 226.9
+-----------------------------
+Tiempo transcurrido: 00:02:51
+encontre solucion nAislesCP: 10.0 rta: 227.0
+-----------------------------
+Tiempo transcurrido: 00:02:52
+encontre solucion nAislesCP: 10.0 rta: 227.1
+-----------------------------
+Tiempo transcurrido: 00:02:53
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+Tiempo transcurrido: 00:04:00
+la solucion hallada es optima
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0008.txt
+-----------------------------
+Ejecutando b/instance_0010.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 444.0
+registerSize: 33
+nAisles inicial: 482
+tope inicial: 21
+nOrders inicial: 14952
+nAislesCP: 3
+Solucion Ranking: 444.0
+topSizes: [3, 4, 5, 6, 7]
+aislesVan: 11 ordersVan: 2941
+aisleRange: 3.0 <= nAislesCP <= 7.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:03:09
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+Tiempo transcurrido: 00:04:05
+la solucion hallada es optima
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0010.txt
+-----------------------------
+Ejecutando b/instance_0002.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 173.58333333333334
+registerSize: 615
+nAisles inicial: 165
+tope inicial: 18
+nOrders inicial: 2162
+nAislesCP: 11
+Solucion Ranking: 180.45454545454547
+topSizes: [9, 10, 11, 12, 13]
+aislesVan: 15 ordersVan: 290
+aisleRange: 9.0 <= nAislesCP <= 13.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:03:40
+encontre solucion nAislesCP: 11.0 rta: 180.63636363636363
+-----------------------------
+Tiempo transcurrido: 00:03:40
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+Tiempo transcurrido: 00:04:16
+la solucion hallada es optima
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0002.txt
+-----------------------------
+Ejecutando b/instance_0014.txt con el solver COMBO2
+-----------------------------
+Solucion H2: 867.3333333333334
+registerSize: 10
+nAisles inicial: 483
+tope inicial: 23
+nOrders inicial: 38202
+nAislesCP: 6
+Solucion Ranking: 883.3333333333334
+topSizes: [6, 7, 8, 9, 10]
+aislesVan: 14 ordersVan: 8486
+aisleRange: 6.0 <= nAislesCP <= 10.0
+-----------------------------
+BUSCANDO SULUCION HEURISTICA
+-----------------------------
+Tiempo transcurrido: 00:03:00
+encontre solucion nAislesCP: 6.0 rta: 883.5
+-----------------------------
+Tiempo transcurrido: 00:03:02
+encontre solucion nAislesCP: 6.0 rta: 883.6666666666666
+-----------------------------
+Tiempo transcurrido: 00:03:03
+encontre solucion nAislesCP: 6.0 rta: 883.8333333333334
+-----------------------------
+Tiempo transcurrido: 00:03:04
+encontre solucion nAislesCP: 6.0 rta: 884.0
+-----------------------------
+Tiempo transcurrido: 00:03:07
+encontre solucion nAislesCP: 6.0 rta: 884.1666666666666
+-----------------------------
+Tiempo transcurrido: 00:03:10
+encontre solucion nAislesCP: 6.0 rta: 884.3333333333334
+-----------------------------
+Tiempo transcurrido: 00:03:13
+encontre solucion nAislesCP: 6.0 rta: 884.5
+-----------------------------
+Tiempo transcurrido: 00:03:14
+encontre solucion nAislesCP: 6.0 rta: 884.6666666666666
+-----------------------------
+Tiempo transcurrido: 00:03:16
+encontre solucion nAislesCP: 6.0 rta: 884.8333333333334
+-----------------------------
+Tiempo transcurrido: 00:03:18
+encontre solucion nAislesCP: 6.0 rta: 885.0
+-----------------------------
+Tiempo transcurrido: 00:03:19
+encontre solucion nAislesCP: 6.0 rta: 885.1666666666666
+-----------------------------
+Tiempo transcurrido: 00:03:23
+la solucion hallada es optima
+-----------------------------
+BUSCANDO SULUCION OPTIMA
+-----------------------------
+me quede sin tiempo y no halle solucion mejor
+Output written to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/output/COMBO2/instance_0014.txt
+Compiling code in /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025...
+STDOUT:
+ [[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------< [0;36morg.sbpo2025.challenge:ChallengeSBPO2025[0;1m >--------------[m
+[[1;34mINFO[m] [1mBuilding ChallengeSBPO2025 1.0[m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-clean-plugin:2.5:clean[m [1m(default-clean)[m @ [36mChallengeSBPO2025[0;1m ---[m
+[[1;34mINFO[m] Deleting /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/target
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.6:resources[m [1m(default-resources)[m @ [36mChallengeSBPO2025[0;1m ---[m
+[[1;34mINFO[m] Using 'UTF-8' encoding to copy filtered resources.
+[[1;34mINFO[m] skip non existing resourceDirectory /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/src/main/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-compiler-plugin:3.1:compile[m [1m(default-compile)[m @ [36mChallengeSBPO2025[0;1m ---[m
+[[1;34mINFO[m] Changes detected - recompiling the module!
+[[1;34mINFO[m] Compiling 19 source files to /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:2.6:testResources[m [1m(default-testResources)[m @ [36mChallengeSBPO2025[0;1m ---[m
+[[1;34mINFO[m] Using 'UTF-8' encoding to copy filtered resources.
+[[1;34mINFO[m] skip non existing resourceDirectory /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/src/test/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-compiler-plugin:3.1:testCompile[m [1m(default-testCompile)[m @ [36mChallengeSBPO2025[0;1m ---[m
+[[1;34mINFO[m] No sources to compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-surefire-plugin:2.12.4:test[m [1m(default-test)[m @ [36mChallengeSBPO2025[0;1m ---[m
+[[1;34mINFO[m] No tests to run.
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-jar-plugin:3.4.2:jar[m [1m(default-jar)[m @ [36mChallengeSBPO2025[0;1m ---[m
+[[1;34mINFO[m] Building jar: /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/target/ChallengeSBPO2025-1.0.jar
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-shade-plugin:3.6.0:shade[m [1m(default)[m @ [36mChallengeSBPO2025[0;1m ---[m
+[[1;34mINFO[m] Including cplex:cplex:jar:22.11 in the shaded jar.
+[[1;34mINFO[m] Including org.apache.commons:commons-lang3:jar:3.17.0 in the shaded jar.
+[[1;34mINFO[m] Including org.scala-lang:scala-library:jar:2.13.0 in the shaded jar.
+[[1;33mWARNING[m] ChallengeSBPO2025-1.0.jar, commons-lang3-3.17.0.jar, cplex-22.11.jar, scala-library-2.13.0.jar define 1 overlapping resource: 
+[[1;33mWARNING[m]   - META-INF/MANIFEST.MF
+[[1;33mWARNING[m] maven-shade-plugin has detected that some files are
+[[1;33mWARNING[m] present in two or more JARs. When this happens, only one
+[[1;33mWARNING[m] single version of the file is copied to the uber jar.
+[[1;33mWARNING[m] Usually this is not harmful and you can skip these warnings,
+[[1;33mWARNING[m] otherwise try to manually exclude artifacts based on
+[[1;33mWARNING[m] mvn dependency:tree -Ddetail=true and the above output.
+[[1;33mWARNING[m] See https://maven.apache.org/plugins/maven-shade-plugin/
+[[1;34mINFO[m] Replacing original artifact with shaded artifact.
+[[1;34mINFO[m] Replacing /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/target/ChallengeSBPO2025-1.0.jar with /home/natanvek/0-COMPUTER/1-ESTUDIO/MercadoLibreChallenge/challenge-sbpo-2025/target/ChallengeSBPO2025-1.0-shaded.jar
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;32mBUILD SUCCESS[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  1.989 s
+[[1;34mINFO[m] Finished at: 2025-08-19T02:18:01-03:00
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+
+STDERR:
+ 
+Maven compilation successful.
+Running instance_0003.txt
+Running instance_0005.txt
+Running instance_0004.txt
+Running instance_0007.txt
+Running instance_0013.txt
+Running instance_0009.txt
+Running instance_0001.txt
+Running instance_0011.txt
+Running instance_0015.txt
+Running instance_0006.txt
+Running instance_0012.txt
+Running instance_0008.txt
+Running instance_0010.txt
+Running instance_0002.txt
+Running instance_0014.txt
+-------------------------------------
+[38;5;213mRunning instance_0001.txt[0m
+nOrders: [38;5;208m11321[0m | nItems: [38;5;208m7675[0m | nAisles: [38;5;208m185[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m631.50[0m | Aisles: [38;5;111m2[0m | Execution Time: [38;5;10m0.15[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+Value: [38;5;226m631.50[0m | Aisles: [38;5;111m2[0m | Execution Time: [38;5;10m0.77[0mmin
+
+---> [38;5;120mResults for COMBO[0m:
+[38;5;196mSolution does not exist[0m
+
+---> [38;5;120mResults for COMBO2[0m:
+Value: [38;5;226m631.50[0m | Aisles: [38;5;111m2[0m | Execution Time: [38;5;10m2.41[0mmin
+
+---> [38;5;120mResults for CPLEXH[0m:
+[38;5;196mSolution does not respect lower boundary[0m
+
+---> [38;5;120mResults for Ranking[0m:
+[38;5;196mSolution does not exist[0m
+-------------------------------------
+
+-------------------------------------
+[38;5;213mRunning instance_0002.txt[0m
+nOrders: [38;5;208m2162[0m | nItems: [38;5;208m5922[0m | nAisles: [38;5;208m165[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m180.64[0m | Aisles: [38;5;111m11[0m | Execution Time: [38;5;10m0.04[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+Value: [38;5;226m180.45[0m | Aisles: [38;5;111m11[0m | Execution Time: [38;5;10m4.43[0mmin
+
+---> [38;5;120mResults for COMBO[0m:
+[38;5;196mSolution does not exist[0m
+
+---> [38;5;120mResults for COMBO2[0m:
+Value: [38;5;226m180.64[0m | Aisles: [38;5;111m11[0m | Execution Time: [38;5;10m4.27[0mmin
+
+---> [38;5;120mResults for CPLEXH[0m:
+Value: [38;5;226m180.64[0m | Aisles: [38;5;111m11[0m | Execution Time: [38;5;10m0.12[0mmin
+
+---> [38;5;120mResults for Ranking[0m:
+Value: [38;5;226m180.45[0m | Aisles: [38;5;111m11[0m | Execution Time: [38;5;10m2.36[0mmin
+-------------------------------------
+
+-------------------------------------
+[38;5;213mRunning instance_0003.txt[0m
+nOrders: [38;5;208m2070[0m | nItems: [38;5;208m5617[0m | nAisles: [38;5;208m164[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m149.60[0m | Aisles: [38;5;111m5[0m | Execution Time: [38;5;10m0.57[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+Value: [38;5;226m149.60[0m | Aisles: [38;5;111m5[0m | Execution Time: [38;5;10m2.91[0mmin
+
+---> [38;5;120mResults for COMBO[0m:
+Value: [38;5;226m149.60[0m | Aisles: [38;5;111m5[0m | Execution Time: [38;5;10m4.30[0mmin
+
+---> [38;5;120mResults for COMBO2[0m:
+Value: [38;5;226m149.60[0m | Aisles: [38;5;111m5[0m | Execution Time: [38;5;10m4.06[0mmin
+
+---> [38;5;120mResults for CPLEXH[0m:
+Value: [38;5;226m149.60[0m | Aisles: [38;5;111m5[0m | Execution Time: [38;5;10m0.93[0mmin
+
+---> [38;5;120mResults for Ranking[0m:
+[38;5;196mSolution does not exist[0m
+-------------------------------------
+
+-------------------------------------
+[38;5;213mRunning instance_0004.txt[0m
+nOrders: [38;5;208m2448[0m | nItems: [38;5;208m6271[0m | nAisles: [38;5;208m163[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m155.94[0m | Aisles: [38;5;111m17[0m | Execution Time: [38;5;10m0.06[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+Value: [38;5;226m155.76[0m | Aisles: [38;5;111m17[0m | Execution Time: [38;5;10m3.81[0mmin
+
+---> [38;5;120mResults for COMBO[0m:
+Value: [38;5;226m155.76[0m | Aisles: [38;5;111m17[0m | Execution Time: [38;5;10m9.97[0mmin
+
+---> [38;5;120mResults for COMBO2[0m:
+Value: [38;5;226m155.94[0m | Aisles: [38;5;111m17[0m | Execution Time: [38;5;10m9.95[0mmin
+
+---> [38;5;120mResults for CPLEXH[0m:
+Value: [38;5;226m155.94[0m | Aisles: [38;5;111m17[0m | Execution Time: [38;5;10m0.13[0mmin
+
+---> [38;5;120mResults for Ranking[0m:
+Value: [38;5;226m155.71[0m | Aisles: [38;5;111m17[0m | Execution Time: [38;5;10m0.38[0mmin
+-------------------------------------
+
+-------------------------------------
+[38;5;213mRunning instance_0005.txt[0m
+nOrders: [38;5;208m6468[0m | nItems: [38;5;208m4959[0m | nAisles: [38;5;208m179[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m368.00[0m | Aisles: [38;5;111m3[0m | Execution Time: [38;5;10m0.08[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+Value: [38;5;226m368.00[0m | Aisles: [38;5;111m3[0m | Execution Time: [38;5;10m0.70[0mmin
+
+---> [38;5;120mResults for COMBO[0m:
+Value: [38;5;226m368.00[0m | Aisles: [38;5;111m3[0m | Execution Time: [38;5;10m2.19[0mmin
+
+---> [38;5;120mResults for COMBO2[0m:
+Value: [38;5;226m368.00[0m | Aisles: [38;5;111m3[0m | Execution Time: [38;5;10m2.04[0mmin
+
+---> [38;5;120mResults for CPLEXH[0m:
+Value: [38;5;226m368.00[0m | Aisles: [38;5;111m3[0m | Execution Time: [38;5;10m0.15[0mmin
+
+---> [38;5;120mResults for Ranking[0m:
+[38;5;196mSolution does not exist[0m
+-------------------------------------
+
+-------------------------------------
+[38;5;213mRunning instance_0006.txt[0m
+nOrders: [38;5;208m1857[0m | nItems: [38;5;208m4982[0m | nAisles: [38;5;208m165[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m84.03[0m | Aisles: [38;5;111m36[0m | Execution Time: [38;5;10m0.63[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+Value: [38;5;226m84.00[0m | Aisles: [38;5;111m36[0m | Execution Time: [38;5;10m13.46[0mmin
+
+---> [38;5;120mResults for COMBO[0m:
+Value: [38;5;226m84.03[0m | Aisles: [38;5;111m36[0m | Execution Time: [38;5;10m9.94[0mmin
+
+---> [38;5;120mResults for COMBO2[0m:
+Value: [38;5;226m84.03[0m | Aisles: [38;5;111m36[0m | Execution Time: [38;5;10m9.95[0mmin
+
+---> [38;5;120mResults for CPLEXH[0m:
+Value: [38;5;226m83.97[0m | Aisles: [38;5;111m35[0m | Execution Time: [38;5;10m1.94[0mmin
+
+---> [38;5;120mResults for Ranking[0m:
+Value: [38;5;226m83.89[0m | Aisles: [38;5;111m35[0m | Execution Time: [38;5;10m2.32[0mmin
+-------------------------------------
+
+-------------------------------------
+[38;5;213mRunning instance_0007.txt[0m
+nOrders: [38;5;208m1841[0m | nItems: [38;5;208m1621[0m | nAisles: [38;5;208m165[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m108.00[0m | Aisles: [38;5;111m1[0m | Execution Time: [38;5;10m0.01[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+[38;5;196mSolution does not exist[0m
+
+---> [38;5;120mResults for COMBO[0m:
+Value: [38;5;226m108.00[0m | Aisles: [38;5;111m1[0m | Execution Time: [38;5;10m2.32[0mmin
+
+---> [38;5;120mResults for COMBO2[0m:
+Value: [38;5;226m108.00[0m | Aisles: [38;5;111m1[0m | Execution Time: [38;5;10m0.75[0mmin
+
+---> [38;5;120mResults for CPLEXH[0m:
+Value: [38;5;226m108.00[0m | Aisles: [38;5;111m1[0m | Execution Time: [38;5;10m0.01[0mmin
+
+---> [38;5;120mResults for Ranking[0m:
+[38;5;196mSolution does not exist[0m
+-------------------------------------
+
+-------------------------------------
+[38;5;213mRunning instance_0008.txt[0m
+nOrders: [38;5;208m12334[0m | nItems: [38;5;208m10365[0m | nAisles: [38;5;208m398[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m227.10[0m | Aisles: [38;5;111m10[0m | Execution Time: [38;5;10m0.93[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+Value: [38;5;226m227.10[0m | Aisles: [38;5;111m10[0m | Execution Time: [38;5;10m1.41[0mmin
+
+---> [38;5;120mResults for COMBO[0m:
+[38;5;196mSolution does not exist[0m
+
+---> [38;5;120mResults for COMBO2[0m:
+Value: [38;5;226m227.10[0m | Aisles: [38;5;111m10[0m | Execution Time: [38;5;10m4.01[0mmin
+
+---> [38;5;120mResults for CPLEXH[0m:
+[38;5;196mSolution does not respect lower boundary[0m
+
+---> [38;5;120mResults for Ranking[0m:
+[38;5;196mSolution does not exist[0m
+-------------------------------------
+
+-------------------------------------
+[38;5;213mRunning instance_0009.txt[0m
+nOrders: [38;5;208m5581[0m | nItems: [38;5;208m4990[0m | nAisles: [38;5;208m417[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m82.50[0m | Aisles: [38;5;111m14[0m | Execution Time: [38;5;10m0.27[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+Value: [38;5;226m82.50[0m | Aisles: [38;5;111m14[0m | Execution Time: [38;5;10m1.58[0mmin
+
+---> [38;5;120mResults for COMBO[0m:
+[38;5;196mSolution does not exist[0m
+
+---> [38;5;120mResults for COMBO2[0m:
+Value: [38;5;226m82.50[0m | Aisles: [38;5;111m14[0m | Execution Time: [38;5;10m2.95[0mmin
+
+---> [38;5;120mResults for CPLEXH[0m:
+Value: [38;5;226m82.50[0m | Aisles: [38;5;111m14[0m | Execution Time: [38;5;10m0.95[0mmin
+
+---> [38;5;120mResults for Ranking[0m:
+[38;5;196mSolution does not exist[0m
+-------------------------------------
+
+-------------------------------------
+[38;5;213mRunning instance_0010.txt[0m
+nOrders: [38;5;208m14952[0m | nItems: [38;5;208m13510[0m | nAisles: [38;5;208m482[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m444.00[0m | Aisles: [38;5;111m3[0m | Execution Time: [38;5;10m0.73[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+Value: [38;5;226m444.00[0m | Aisles: [38;5;111m3[0m | Execution Time: [38;5;10m1.21[0mmin
+
+---> [38;5;120mResults for COMBO[0m:
+[38;5;196mSolution does not exist[0m
+
+---> [38;5;120mResults for COMBO2[0m:
+Value: [38;5;226m444.00[0m | Aisles: [38;5;111m3[0m | Execution Time: [38;5;10m4.09[0mmin
+
+---> [38;5;120mResults for CPLEXH[0m:
+[38;5;196mSolution does not respect lower boundary[0m
+
+---> [38;5;120mResults for Ranking[0m:
+[38;5;196mSolution does not exist[0m
+-------------------------------------
+
+-------------------------------------
+[38;5;213mRunning instance_0011.txt[0m
+nOrders: [38;5;208m45112[0m | nItems: [38;5;208m37820[0m | nAisles: [38;5;208m482[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m898.80[0m | Aisles: [38;5;111m10[0m | Execution Time: [38;5;10m5.95[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+Value: [38;5;226m898.70[0m | Aisles: [38;5;111m10[0m | Execution Time: [38;5;10m1.41[0mmin
+
+---> [38;5;120mResults for COMBO[0m:
+[38;5;196mSolution does not exist[0m
+
+---> [38;5;120mResults for COMBO2[0m:
+Value: [38;5;226m898.80[0m | Aisles: [38;5;111m10[0m | Execution Time: [38;5;10m9.94[0mmin
+
+---> [38;5;120mResults for CPLEXH[0m:
+Value: [38;5;226m898.80[0m | Aisles: [38;5;111m10[0m | Execution Time: [38;5;10m5.95[0mmin
+
+---> [38;5;120mResults for Ranking[0m:
+Value: [38;5;226m898.70[0m | Aisles: [38;5;111m10[0m | Execution Time: [38;5;10m2.00[0mmin
+-------------------------------------
+
+-------------------------------------
+[38;5;213mRunning instance_0012.txt[0m
+nOrders: [38;5;208m28263[0m | nItems: [38;5;208m24432[0m | nAisles: [38;5;208m483[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m567.64[0m | Aisles: [38;5;111m11[0m | Execution Time: [38;5;10m1.91[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+Value: [38;5;226m566.91[0m | Aisles: [38;5;111m11[0m | Execution Time: [38;5;10m1.33[0mmin
+
+---> [38;5;120mResults for COMBO[0m:
+[38;5;196mSolution does not exist[0m
+
+---> [38;5;120mResults for COMBO2[0m:
+Value: [38;5;226m567.64[0m | Aisles: [38;5;111m11[0m | Execution Time: [38;5;10m9.95[0mmin
+
+---> [38;5;120mResults for CPLEXH[0m:
+Value: [38;5;226m567.36[0m | Aisles: [38;5;111m11[0m | Execution Time: [38;5;10m1.03[0mmin
+
+---> [38;5;120mResults for Ranking[0m:
+Value: [38;5;226m567.64[0m | Aisles: [38;5;111m11[0m | Execution Time: [38;5;10m1.91[0mmin
+-------------------------------------
+
+-------------------------------------
+[38;5;213mRunning instance_0013.txt[0m
+nOrders: [38;5;208m38214[0m | nItems: [38;5;208m32604[0m | nAisles: [38;5;208m483[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m757.11[0m | Aisles: [38;5;111m9[0m | Execution Time: [38;5;10m8.36[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+Value: [38;5;226m757.11[0m | Aisles: [38;5;111m9[0m | Execution Time: [38;5;10m1.39[0mmin
+
+---> [38;5;120mResults for COMBO[0m:
+[38;5;196mSolution does not exist[0m
+
+---> [38;5;120mResults for COMBO2[0m:
+Value: [38;5;226m757.11[0m | Aisles: [38;5;111m9[0m | Execution Time: [38;5;10m9.94[0mmin
+
+---> [38;5;120mResults for CPLEXH[0m:
+Value: [38;5;226m757.11[0m | Aisles: [38;5;111m9[0m | Execution Time: [38;5;10m2.99[0mmin
+
+---> [38;5;120mResults for Ranking[0m:
+Value: [38;5;226m756.89[0m | Aisles: [38;5;111m9[0m | Execution Time: [38;5;10m1.76[0mmin
+-------------------------------------
+
+-------------------------------------
+[38;5;213mRunning instance_0014.txt[0m
+nOrders: [38;5;208m38202[0m | nItems: [38;5;208m32238[0m | nAisles: [38;5;208m483[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m885.17[0m | Aisles: [38;5;111m6[0m | Execution Time: [38;5;10m7.56[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+Value: [38;5;226m879.67[0m | Aisles: [38;5;111m6[0m | Execution Time: [38;5;10m1.30[0mmin
+
+---> [38;5;120mResults for COMBO[0m:
+[38;5;196mSolution does not exist[0m
+
+---> [38;5;120mResults for COMBO2[0m:
+Value: [38;5;226m885.17[0m | Aisles: [38;5;111m6[0m | Execution Time: [38;5;10m9.94[0mmin
+
+---> [38;5;120mResults for CPLEXH[0m:
+Value: [38;5;226m883.33[0m | Aisles: [38;5;111m6[0m | Execution Time: [38;5;10m1.96[0mmin
+
+---> [38;5;120mResults for Ranking[0m:
+Value: [38;5;226m881.33[0m | Aisles: [38;5;111m6[0m | Execution Time: [38;5;10m2.10[0mmin
+-------------------------------------
+
+-------------------------------------
+[38;5;213mRunning instance_0015.txt[0m
+nOrders: [38;5;208m11541[0m | nItems: [38;5;208m9905[0m | nAisles: [38;5;208m398[0m
+
+---> [38;5;120mResults for BEST[0m:
+Value: [38;5;226m166.14[0m | Aisles: [38;5;111m14[0m | Execution Time: [38;5;10m3.40[0mmin
+
+---> [38;5;120mResults for BothRanking[0m:
+Value: [38;5;226m163.53[0m | Aisles: [38;5;111m15[0m | Execution Time: [38;5;10m2.23[0mmin
+
+---> [38;5;120mResults for COMBO[0m:
+[38;5;196mSolution does not exist[0m
+
+---> [38;5;120mResults for COMBO2[0m:
+[38;5;196mThe Orders do not fit in the aisles chosen[0m
+
+---> [38;5;120mResults for CPLEXH[0m:
+[38;5;196mSolution does not respect lower boundary[0m
+
+---> [38;5;120mResults for Ranking[0m:
+[38;5;196mSolution does not exist[0m
+-------------------------------------
+

@@ -31,25 +31,6 @@ public class BURH extends Heuristica {
         }
     }
 
-    int calcRegisterSize(StopWatch stopWatch, long minutos) {
-        long ti = stopWatch.getNanoTime(), tiempo_iterando = 0, iteraciones = 0;
-        while (tiempo_iterando < 5e9) {
-            for (int i = 0; i < 100; ++i) {
-                EfficientCart simulatingBest = new EfficientCart();
-                for (int r = 0; r < tope; ++r) {
-                    EfficientCart estimatingRegisterSize = new EfficientCart(simulatingBest);
-                    simulatingBest.addAisle(aisles[r]);
-                    fill(estimatingRegisterSize);
-                    simulatingBest = estimatingRegisterSize;
-                }
-            }
-            tiempo_iterando = (stopWatch.getNanoTime() - ti);
-            iteraciones += 100;
-        }
-        double tope_por_fill = (double) tiempo_iterando / (iteraciones * 1e6);
-        return (int) ((minutos * 60 * 1e3) / (tope_por_fill * nAisles));
-    }
-
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {
         int[] pesosAisle = new int[nAisles];
@@ -81,7 +62,7 @@ public class BURH extends Heuristica {
         // ----------------------------------------------------------------------------------
 
         // int registerSize = 20;
-        int registerSize = calcRegisterSize(stopWatch, 1);
+        int registerSize = calcRegisterSize(1);
         System.out.println("registerSize: " + registerSize);
 
         // ----------------------------------------------------------------------------------

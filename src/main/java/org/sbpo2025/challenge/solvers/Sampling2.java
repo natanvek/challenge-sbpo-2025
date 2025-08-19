@@ -7,8 +7,8 @@ import java.util.*;
 
 import org.apache.commons.lang3.time.StopWatch;
 
-public class Ranking extends Heuristica {
-    public Ranking(List<Map<Integer, Integer>> _orders, List<Map<Integer, Integer>> _aisles, int _nItems,
+public class Sampling2 extends Heuristica {
+    public Sampling2(List<Map<Integer, Integer>> _orders, List<Map<Integer, Integer>> _aisles, int _nItems,
             int _waveSizeLB,
             int _waveSizeUB) {
         super(_orders, _aisles, _nItems, _waveSizeLB, _waveSizeUB);
@@ -29,7 +29,6 @@ public class Ranking extends Heuristica {
         }
     }
 
- 
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {
         int[] pesosAisle = new int[nAisles];
@@ -60,9 +59,10 @@ public class Ranking extends Heuristica {
 
         // ----------------------------------------------------------------------------------
 
-        int registerSize = 50;
-        // int registerSize = calcRegisterSize(2);
+        int registerSize = 1;
+        // int registerSize = Math.max(1, calcRegisterSize(stopWatch, 8));
         System.out.println("registerSize: " + registerSize);
+        System.out.println("rta: " + rta.getValue());
 
         // ----------------------------------------------------------------------------------
 
@@ -72,24 +72,65 @@ public class Ranking extends Heuristica {
 
         insertCart(rankings.get(0), new EfficientCart(), registerSize);
 
-        // System.out.println("Pasillos: " + as);
-        int minuto = 1;
-        for (Aisle p : aisles)
-            for (int r = tope - 1; r >= 0; --r)
-                for (EfficientCart m : rankings.get(r)) {
-                    EfficientCart copia = new EfficientCart(m);
-                    copia.addAisle(p);
-                    fill(copia);
-                    updateRta(copia);
-                    insertCart(rankings.get(r + 1), copia, registerSize);
-                    if (stopWatch.getNanoTime() > minuto * 60 * 1e9) {
-                        System.out.println("Minuto: " + minuto);
-                        System.out.println("rta: " + rta.getValue());
-                        minuto++;
+        int samples = 1000;
 
-                    }
+        int sumaOrders = 0;
+        for (Order o : orders) sumaOrders += o.size;
+        System.out.println("sumaOrders: " + sumaOrders);
+
+        Aisle[] aislesVan = new Aisle[nAisles];
+
+        for (Aisle p : aisles) aislesVan[p.id] = p;
+
+        for (int it = 0; it < 10; it++) {
+            System.out.println("Iteration: " + it);
+            System.out.println("aislesVan: " + aislesVan.length);
+
+
+            List<Integer> perm = new ArrayList<>();
+            for (int i = 0; i < aislesVan.length; i++) perm.add(i);
+
+            for (int r = 1; r <= tope; ++r) {
+
+
+                double top = 0;;
+                for (int s = 0; s < samples; ++s) {
+
+                    Collections.shuffle(perm); // barajar
+                    EfficientCart randomCart = new EfficientCart();
+                    for (int i = 0; i < r; ++i)
+                        randomCart.addAisle(aislesVan[perm.get(i)]);
+
+                    fill(randomCart);
+                    updateRta(randomCart);
+                    insertCart(rankings.get(r), randomCart, registerSize);
+                    top = Math.max(top, randomCart.getValue());
+
                 }
-        printElapsedTime(stopWatch);
+
+                System.out.println("r: " + r + " | top: " + top);
+            }
+
+            Set<Aisle> nextAislesVan = new HashSet<>();
+            for (int r = 1; r <= tope; ++r) {
+                for (EfficientCart m : rankings.get(r)) {
+                    if (m.getCantItems() < waveSizeLB)
+                        continue;
+                    for (Aisle a : m.my_aisles)
+                        nextAislesVan.add(a);
+                }
+            }
+
+            aislesVan = new Aisle[nextAislesVan.size()];
+            int pos = 0;
+            for (Aisle a : nextAislesVan) aislesVan[pos++] = a;
+
+            
+        }
+
+        System.out.println("Tope: " + tope);
+        System.out.println("nAisles: " + nAisles);
+        System.out.println("aislesInSolution: " + rta.getAisles().size());
         return getSolution();
     }
 }

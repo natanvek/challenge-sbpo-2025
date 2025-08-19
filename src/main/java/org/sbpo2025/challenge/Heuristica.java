@@ -2,12 +2,15 @@ package org.sbpo2025.challenge;
 
 import java.util.*;
 
+import org.apache.commons.lang3.time.StopWatch;
+
 public abstract class Heuristica extends ChallengeSolver {
 
     protected static class Order {
         public int id;
         public Map<Integer, Integer> items;
         public int size;
+        public int pos;
 
         // Constructor para inicializar Order
         public Order(int _id, Map<Integer, Integer> _items, int _size) {
@@ -21,6 +24,7 @@ public abstract class Heuristica extends ChallengeSolver {
         public int id;
         public Map<Integer, Integer> items;
         public int size;
+        public int pos;
 
         // Constructor para inicializar Order
         public Aisle(int _id, Map<Integer, Integer> _items, int _size) {
@@ -222,6 +226,40 @@ public abstract class Heuristica extends ChallengeSolver {
             fill(actual);
             updateRta(actual);
         }
+    }
+
+    public void printElapsedTime(StopWatch stopWatch) {
+        long elapsedMillis = stopWatch.getNanoTime() / 1_000_000;
+        long hours = elapsedMillis / (1000 * 60 * 60);
+        long minutes = (elapsedMillis / (1000 * 60)) % 60;
+        long seconds = (elapsedMillis / 1000) % 60;
+        System.out.println(String.format("Tiempo transcurrido: %02d:%02d:%02d", hours, minutes, seconds));
+    }
+
+    public int calcRegisterSize(double minutos) {
+        StopWatch stopWatch = StopWatch.createStarted();
+        long ti = stopWatch.getNanoTime(), tiempo_iterando = 0, iteraciones = 0;
+        while (tiempo_iterando < 5e9) {
+            for (int i = 0; i < 100; ++i) {
+                EfficientCart simulatingBest = new EfficientCart();
+
+                List<Aisle> perm = new ArrayList<>();
+                for (Aisle a : aisles)
+                    perm.add(a);
+                Collections.shuffle(perm);
+
+                for (int r = 0; r < tope; ++r) {
+                    EfficientCart estimatingRegisterSize = new EfficientCart(simulatingBest);
+                    estimatingRegisterSize.addAisle(perm.get(r));
+                    fill(estimatingRegisterSize);
+                    simulatingBest = estimatingRegisterSize;
+                }
+            }
+            tiempo_iterando = (stopWatch.getNanoTime() - ti);
+            iteraciones += 100;
+        }
+        double tope_por_fill = (double) tiempo_iterando / (iteraciones * 1e6);
+        return Math.max(1, Math.min(1000, (int) ((minutos * 1000.0 * 60.0) / (tope_por_fill * nAisles))));
     }
 
     public ChallengeSolution getSolution() {
