@@ -60,6 +60,9 @@ class WaveOrderPicking:
         total_units_picked = 0
 
         for order in selected_orders:
+            if not (order < len(self.orders)):
+                print("\033[38;5;196mSolution to other dataset\033[0m")
+                return False
             total_units_picked += np.sum(list(self.orders[order].values()))
 
 
@@ -122,9 +125,9 @@ if __name__ == "__main__":
     selected_orders, visited_aisles, execution_time = wave_order_picking.read_output(sys.argv[2])
 
     is_feasible = wave_order_picking.is_solution_feasible(selected_orders, visited_aisles)
-    objective_value = wave_order_picking.compute_objective_function(selected_orders, visited_aisles)
 
     if is_feasible:
+        objective_value = wave_order_picking.compute_objective_function(selected_orders, visited_aisles)
         print("Value:", '\033[38;5;226m' + str(f"{objective_value:.2f}") + "\033[0m", end=" | ")
         print("Aisles:", '\033[38;5;111m' + str(len(visited_aisles)) + "\033[0m",end=" | ")
         print("Execution Time:", '\033[38;5;10m' + str(execution_time) + "\033[0m"+"min")
