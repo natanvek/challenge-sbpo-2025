@@ -2,12 +2,22 @@ package org.sbpo2025.challenge;
 
 import java.util.*;
 
+import org.apache.commons.lang3.time.StopWatch;
+
+import ilog.concert.IloException;
+import ilog.concert.IloLinearNumExpr;
+import ilog.concert.IloNumExpr;
+import ilog.concert.IloNumVar;
+import ilog.concert.IloRange;
+import ilog.cplex.IloCplex;
+
 public abstract class Heuristica extends ChallengeSolver {
 
     protected static class Order {
         public int id;
         public Map<Integer, Integer> items;
         public int size;
+        public int pos;
 
         // Constructor para inicializar Order
         public Order(int _id, Map<Integer, Integer> _items, int _size) {
@@ -21,6 +31,7 @@ public abstract class Heuristica extends ChallengeSolver {
         public int id;
         public Map<Integer, Integer> items;
         public int size;
+        public int pos;
 
         // Constructor para inicializar Order
         public Aisle(int _id, Map<Integer, Integer> _items, int _size) {
@@ -199,6 +210,45 @@ public abstract class Heuristica extends ChallengeSolver {
         }
     }
 
+    public boolean insertCart(PriorityQueue<EfficientCart> queue, EfficientCart newCart, Integer regSize) {
+        if (queue.size() < regSize) {
+            queue.offer(newCart);
+            return true;
+        }
+
+        if (queue.peek().getValue() < newCart.getValue()) {
+            queue.poll();
+            queue.offer(newCart);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    protected List<PriorityQueue<Heuristica.EfficientCart>> rankings, rankings2;
+
+    public List<Integer> bestSizes(int cuantos) {
+        PriorityQueue<Heuristica.EfficientCart> bestSizes = new PriorityQueue<>(
+                Comparator.comparingDouble(EfficientCart::getValue));
+
+        for (int r = 1; r <= tope; ++r) {
+            PriorityQueue<Heuristica.EfficientCart> actual = new PriorityQueue<>(
+                    Comparator.comparingInt(EfficientCart::getCantItems));
+            for (EfficientCart m : rankings.get(r))
+                if (m.getCantItems() >= waveSizeLB)
+                    insertCart(actual, m, 1);
+
+            if (!actual.isEmpty())
+                insertCart(bestSizes, actual.peek(), cuantos);
+        }
+
+        List<Integer> bestSizesList = new ArrayList<>();
+        for (EfficientCart m : bestSizes) {
+            bestSizesList.add(m.aisleCount());
+        }
+        return bestSizesList;
+    }
+
     public void updateRta(EfficientCart ec) {
         EfficientCart copy = new EfficientCart(ec);
         copy.removeRedundantAisles();
@@ -222,6 +272,210 @@ public abstract class Heuristica extends ChallengeSolver {
             fill(actual);
             updateRta(actual);
         }
+    }
+
+    public void printElapsedTime(StopWatch stopWatch) {
+        long elapsedMillis = stopWatch.getNanoTime() / 1_000_000;
+        long hours = elapsedMillis / (1000 * 60 * 60);
+        long minutes = (elapsedMillis / (1000 * 60)) % 60;
+        long seconds = (elapsedMillis / 1000) % 60;
+        System.out.println(String.format("Tiempo transcurrido: %02d:%02d:%02d", hours, minutes, seconds));
+    }
+
+    protected IloCplex cplex;
+    protected IloLinearNumExpr waveSize, nAislesCP;
+    protected IloRange aisleRange;
+    protected Double mnrta;
+    protected IloNumVar[] aCP, oCP;
+    protected IloNumExpr obj;
+    protected IloRange haySolucion;
+
+    protected List<Aisle> aislesVan;
+
+    // pasar de Set<Order> a array fijo
+    protected List<Order> ordersVan;
+    protected int changui = 3;
+    protected Set<Integer> rtaOrders, rtaAisles;
+
+    public void init() {
+
+        int[] pesosAisle = new int[nAisles];
+
+        for (Order o : orders) {
+            if (o.size > waveSizeUB)
+                continue;
+            for (Aisle p : aisles) {
+                int ocupa = 0;
+
+                for (Map.Entry<Integer, Integer> entry : o.items.entrySet())
+                    ocupa += Math.min(p.items.getOrDefault(entry.getKey(), 0).intValue(), entry.getValue());
+
+                pesosAisle[p.id] += ocupa;
+            }
+        }
+
+        Arrays.sort(orders, (o1, o2) -> Integer.compare(o2.size, o1.size));
+        Arrays.sort(aisles, (a1, a2) -> Integer.compare(a2.size, a1.size));
+        pasada();
+
+        Arrays.sort(aisles, (a1, a2) -> Integer.compare(pesosAisle[a2.id], pesosAisle[a1.id]));
+        pasada();
+
+    }
+
+    public void setUpCplex() throws IloException {
+        cplex.setOut(null);
+
+        aCP = cplex.boolVarArray(nAisles);
+        oCP = cplex.boolVarArray(nOrders);
+
+        for (Order o : orders) {
+            if (o.size > waveSizeUB)
+                cplex.addEq(oCP[o.id], 0);
+        }
+
+        aislesVan = new ArrayList<>();
+        int pos = 0;
+        for (Aisle a : aisles) {
+            aislesVan.add(a);
+            a.pos = pos++; // Asignar el id como posición
+        }
+
+        ordersVan = new ArrayList<>();
+        pos = 0;
+        for (Order o : orders) {
+            ordersVan.add(o);
+            o.pos = pos++; // Asignar el id como posición
+        }
+
+        Map<Integer, Integer> disponible = new HashMap<>();
+        for (Aisle a : aisles) {
+            for (Map.Entry<Integer, Integer> entry : a.items.entrySet()) {
+                disponible.put(entry.getKey(), disponible.getOrDefault(entry.getKey(), 0) + entry.getValue());
+            }
+        }
+
+        for (Order o : orders) {
+            for (Map.Entry<Integer, Integer> entry : o.items.entrySet()) {
+                if (disponible.getOrDefault(entry.getKey(), 0) < entry.getValue()) {
+                    cplex.addEq(oCP[o.pos], 0);
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < nItems; i++) {
+            IloLinearNumExpr item_i_enOrders = cplex.linearNumExpr();
+            IloLinearNumExpr item_i_enAisles = cplex.linearNumExpr();
+            for (Order o : ordersVan) {
+                if (o.items.getOrDefault(i, 0) > 0) {
+                    item_i_enOrders.addTerm(oCP[o.pos], o.items.getOrDefault(i, 0));
+                }
+            }
+
+            for (Aisle a : aislesVan) {
+                if (a.items.getOrDefault(i, 0) > 0) {
+                    item_i_enAisles.addTerm(aCP[a.pos], a.items.getOrDefault(i, 0));
+                }
+            }
+
+            cplex.addLe(item_i_enOrders, item_i_enAisles);
+        }
+
+        waveSize = cplex.linearNumExpr();
+        for (Order o : orders)
+            waveSize.addTerm(oCP[o.pos], o.size);
+
+        cplex.addRange(waveSizeLB, waveSize, waveSizeUB);
+
+        nAislesCP = cplex.linearNumExpr();
+        for (Aisle a : aisles)
+            nAislesCP.addTerm(aCP[a.pos], 1);
+
+        aisleRange = cplex.addRange(1, nAislesCP, tope);
+
+        obj = cplex.numExpr();
+        haySolucion = cplex.addLe(1e-3, obj);
+
+    }
+
+    public boolean runCplex(StopWatch stopWatch) throws IloException {
+        if (getRemainingTime(stopWatch) <= changui)
+            return false;
+
+        cplex.setParam(IloCplex.Param.TimeLimit, getRemainingTime(stopWatch) - changui);
+
+        if (cplex.solve()) {
+            Double posiblerta = cplex.getValue(waveSize) / cplex.getValue(nAislesCP);
+
+            if (mnrta < posiblerta) {
+                mnrta = posiblerta;
+                rtaAisles.clear();
+                rtaOrders.clear();
+
+                for (Order o : ordersVan)
+                    if (cplex.getValue(oCP[o.pos]) > 0.5)
+                        rtaOrders.add(o.id);
+
+                for (Aisle a : aislesVan)
+                    if (cplex.getValue(aCP[a.pos]) > 0.5)
+                        rtaAisles.add(a.id);
+
+                if (Math.floor(waveSizeUB / mnrta + 1e-4) < Math.floor(aisleRange.getUB() + 1e-4))
+                    aisleRange.setUB(Math.floor(waveSizeUB / mnrta + 1e-4));
+            }
+
+            if (getRemainingTime(stopWatch) <= changui) {
+                return false;
+            }
+
+            return true;
+        } else {
+            if (getRemainingTime(stopWatch) > changui) {
+                return false;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public void findOptimalSolution(StopWatch stopWatch) throws IloException {
+
+        while (true) {
+            double thisRta = mnrta + 0.005;
+            haySolucion.setExpr(cplex.sum(waveSize, cplex.prod(-thisRta, nAislesCP)));
+
+            if (!runCplex(stopWatch))
+                break;
+
+        }
+
+    }
+
+    public int calcRegisterSize(double minutos) {
+        StopWatch stopWatch = StopWatch.createStarted();
+        long ti = stopWatch.getNanoTime(), tiempo_iterando = 0, iteraciones = 0;
+        while (tiempo_iterando < 5e9) {
+            for (int i = 0; i < 100; ++i) {
+                EfficientCart simulatingBest = new EfficientCart();
+
+                List<Aisle> perm = new ArrayList<>();
+                for (Aisle a : aisles)
+                    perm.add(a);
+                Collections.shuffle(perm);
+
+                for (int r = 0; r < tope; ++r) {
+                    EfficientCart estimatingRegisterSize = new EfficientCart(simulatingBest);
+                    estimatingRegisterSize.addAisle(perm.get(r));
+                    fill(estimatingRegisterSize);
+                    simulatingBest = estimatingRegisterSize;
+                }
+            }
+            tiempo_iterando = (stopWatch.getNanoTime() - ti);
+            iteraciones += 100;
+        }
+        double tope_por_fill = (double) tiempo_iterando / (iteraciones * 1e6);
+        return Math.max(1, Math.min(1000, (int) ((minutos * 1000.0 * 60.0) / (tope_por_fill * nAisles))));
     }
 
     public ChallengeSolution getSolution() {
