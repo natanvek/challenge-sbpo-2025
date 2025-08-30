@@ -146,6 +146,7 @@ public class COMBO2 extends Heuristica {
         for (Aisle a : aislesVan)
             nAislesCP.addTerm(aCP[a.pos], 1);
 
+        // aisleRange = cplex.addRange(1, nAislesCP, tope);
 
         aisleRange = cplex.addRange(minTopSize, nAislesCP, maxTopSize);
 
@@ -173,6 +174,7 @@ public class COMBO2 extends Heuristica {
         runRanking();
 
         mnrta = rta.getValue();
+
 
         try {
             cplex = new IloCplex();
