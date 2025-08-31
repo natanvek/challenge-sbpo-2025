@@ -31,7 +31,7 @@ public class COMBO2 extends Heuristica {
         insertCart(rankings.get(0), new EfficientCart(), 1);
 
         int registerSize = calcRegisterSize(4);
-        int registerSize2 = 5;
+        int registerSize2 = 7;
 
         for (Aisle p : aisles)
             for (int r = tope - 1; r >= 0; --r)
