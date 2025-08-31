@@ -180,15 +180,20 @@ public class COMBO2 extends Heuristica {
             cplex = new IloCplex();
             setUpHCplex();
 
+            printElapsedTime(stopWatch);
+            System.out.println("probando heuristica");
             findOptimalSolution(stopWatch);
 
+            printElapsedTime(stopWatch);
+            System.out.println("probando optimo");
+            
             if (getRemainingTime(stopWatch) > 100) {
                 cplex = new IloCplex();
                 setUpCplex();
                 changui = 5;
                 findOptimalSolution(stopWatch);
             }
-
+            printElapsedTime(stopWatch);
         } catch (
 
         Exception e) {
