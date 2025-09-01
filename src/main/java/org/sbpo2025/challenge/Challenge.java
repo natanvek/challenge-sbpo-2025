@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class Challenge {
 
@@ -125,6 +124,5 @@ public class Challenge {
         ChallengeSolution challengeSolution = challengeSolver.solve(stopWatch);
 
         challenge.writeOutput(challengeSolution, args[1]);
-        System.out.println(String.format("%.2f", ((double) stopWatch.getTime(TimeUnit.MILLISECONDS) / 60000)) + "");
     }
 }

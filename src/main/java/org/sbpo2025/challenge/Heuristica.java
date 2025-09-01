@@ -76,8 +76,7 @@ public abstract class Heuristica extends ChallengeSolver {
                     anda = false;
             }
 
-
-            if(orderSize <= waveSizeUB && anda)
+            if (orderSize <= waveSizeUB && anda)
                 ordersh_aux.add(new Order(o, _orders.get(o), orderSize));
 
         }
@@ -162,7 +161,6 @@ public abstract class Heuristica extends ChallengeSolver {
                 Inventory.addAisle(a);
         }
 
-
     }
 
     public boolean insertCart(PriorityQueue<EfficientCart> queue, EfficientCart newCart, Integer regSize) {
@@ -228,6 +226,7 @@ public abstract class Heuristica extends ChallengeSolver {
         }
     }
 
+
     public void printElapsedTime(StopWatch stopWatch) {
         long elapsedMillis = stopWatch.getNanoTime() / 1_000_000;
         long hours = elapsedMillis / (1000 * 60 * 60);
@@ -248,7 +247,7 @@ public abstract class Heuristica extends ChallengeSolver {
 
     // pasar de Set<Order> a array fijo
     protected List<Order> ordersVan;
-    protected int changui = 3;
+    protected int changui = 7;
     protected Set<Integer> rtaOrders, rtaAisles;
 
     public void init() {
@@ -274,7 +273,6 @@ public abstract class Heuristica extends ChallengeSolver {
 
         Arrays.sort(aisles, (a1, a2) -> Integer.compare(pesosAisle[a2.id], pesosAisle[a1.id]));
         pasada();
-        System.out.println("Solucion H2: " + rta.getValue());
 
     }
 
@@ -364,8 +362,6 @@ public abstract class Heuristica extends ChallengeSolver {
 
         if (cplex.solve()) {
             Double posiblerta = cplex.getValue(waveSize) / cplex.getValue(nAislesCP);
-            printElapsedTime(stopWatch);
-            System.out.println("encontre solucion nAislesCP: " + cplex.getValue(nAislesCP) + " rta: " + posiblerta);
 
             if (mnrta < posiblerta) {
                 mnrta = posiblerta;
@@ -385,27 +381,18 @@ public abstract class Heuristica extends ChallengeSolver {
             }
 
             if (getRemainingTime(stopWatch) <= changui) {
-                System.out.println("me quede sin tiempo y no halle solucion mejor");
                 return false;
             }
 
             return true;
         } else {
-            if (getRemainingTime(stopWatch) > changui) {
-                printElapsedTime(stopWatch);
-                System.out.println("la solucion hallada es optima");
-                return false;
-            } else {
-                System.out.println("me quede sin tiempo y no halle solucion mejor");
-                return false;
-            }
+            return false;
         }
     }
 
     public void findOptimalSolution(StopWatch stopWatch) throws IloException {
 
         do {
-            System.out.println("-----------------------------");
             double thisRta = mnrta + 0.005;
             haySolucion.setExpr(cplex.sum(waveSize, cplex.prod(-thisRta, nAislesCP)));
         } while (runCplex(stopWatch));
@@ -438,5 +425,4 @@ public abstract class Heuristica extends ChallengeSolver {
         return Math.max(1, Math.min(1000, (int) ((minutos * 1000.0 * 60.0) / (tope_por_fill * nAisles))));
     }
 
-    
 }

@@ -31,8 +31,7 @@ public class COMBO2 extends Heuristica {
         insertCart(rankings.get(0), new EfficientCart(), 1);
 
         int registerSize = calcRegisterSize(4);
-        int registerSize2 = 20;
-        System.out.println("registerSize: " + registerSize);
+        int registerSize2 = 25;
 
         for (Aisle p : aisles)
             for (int r = tope - 1; r >= 0; --r)
@@ -68,7 +67,6 @@ public class COMBO2 extends Heuristica {
 
         // ordena el topsizes
         topSizes.sort((s1, s2) -> Integer.compare(s1, s2));
-        System.out.println("topSizes: " + topSizes);
         int minTopSize = Math.max(topSizes.get(0) - 1, 1);
         int maxTopSize = Math.min(topSizes.get(topSizes.size() - 1), tope);
         for (int k = minTopSize; k <= maxTopSize; ++k)
@@ -114,8 +112,6 @@ public class COMBO2 extends Heuristica {
         for (int i = 0; i < ordersVan.size(); ++i)
             ordersVan.get(i).pos = i;
 
-        System.out.println("aislesVan: " + aislesVan.size() + " ordersVan: " + ordersVan.size());
-
         for (int i = 0; i < nItems; i++) {
             IloLinearNumExpr item_i_enOrders = cplex.linearNumExpr();
             IloLinearNumExpr item_i_enAisles = cplex.linearNumExpr();
@@ -140,15 +136,12 @@ public class COMBO2 extends Heuristica {
         for (Aisle a : aislesVan)
             nAislesCP.addTerm(aCP[a.pos], 1);
 
-        // aisleRange = cplex.addRange(1, nAislesCP, tope);
 
         aisleRange = cplex.addRange(minTopSize, nAislesCP, maxTopSize);
 
-        // imprimir range
-        System.out.println("aisleRange: " + aisleRange.getLB() + " <= nAislesCP <= " + aisleRange.getUB());
 
         obj = cplex.numExpr();
-        haySolucion = cplex.addLe(1e-3, obj); 
+        haySolucion = cplex.addLe(1e-3, obj);
     }
 
     public void improveSolutionsWithCplex(StopWatch stopWatch) throws IloException {
@@ -157,7 +150,7 @@ public class COMBO2 extends Heuristica {
 
         IloRange[] cons = new IloRange[aislesVan.size()];
         for (Aisle a : aislesVan)
-            cons[a.pos] = cplex.addEq(aCP[a.pos], 0); // inicialmente todas = 0
+            cons[a.pos] = cplex.addEq(aCP[a.pos], 0);
 
         for (int k = (int) Math.floor(aisleRange.getLB()); k <= maxTopSize; ++k) {
             for (EfficientCart m : rankings2.get(k)) {
@@ -179,48 +172,31 @@ public class COMBO2 extends Heuristica {
     public ChallengeSolution solve(StopWatch stopWatch) {
         init();
 
-        System.out.println("-----------------------------");
-        printElapsedTime(stopWatch);
-        System.out.println("BUSCANDO SOLUCION RANKING");
         runRanking();
 
         mnrta = rta.getValue();
-
-        System.out.println("nAisles inicial: " + nAisles);
-        System.out.println("tope inicial: " + tope);
-        System.out.println("nOrders inicial: " + nOrders);
-        System.out.println("nAislesCP: " + rtaAisles.size());
-        System.out.println("Solucion Ranking: " + mnrta);
 
         try {
             cplex = new IloCplex();
             setUpHCplex();
 
-            System.out.println("-----------------------------");
-            printElapsedTime(stopWatch);
-            System.out.println("MEJORANDO SOLUCIONES RANKING");
             improveSolutionsWithCplex(stopWatch);
 
-            System.out.println("-----------------------------");
-            printElapsedTime(stopWatch);
-            System.out.println("BUSCANDO SOLUCION HEURISTICA");
             findOptimalSolution(stopWatch);
 
             if (getRemainingTime(stopWatch) > 100) {
                 cplex = new IloCplex();
                 setUpCplex();
-                changui = 5;
-                System.out.println("-----------------------------");
-                printElapsedTime(stopWatch);
-                System.out.println("BUSCANDO SOLUCION OPTIMA");
+                changui = 7;
                 findOptimalSolution(stopWatch);
+
             }
+            printElapsedTime(stopWatch);
 
         } catch (
 
         Exception e) {
             e.printStackTrace(System.out);
-            System.out.println("Algo fallo");
         }
 
         return new ChallengeSolution(rtaOrders, rtaAisles);
