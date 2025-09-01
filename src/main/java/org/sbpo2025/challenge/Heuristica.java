@@ -233,6 +233,7 @@ public abstract class Heuristica extends ChallengeSolver {
         long hours = elapsedMillis / (1000 * 60 * 60);
         long minutes = (elapsedMillis / (1000 * 60)) % 60;
         long seconds = (elapsedMillis / 1000) % 60;
+        System.out.println(String.format("Tiempo transcurrido: %02d:%02d:%02d", hours, minutes, seconds));
     }
 
     protected IloCplex cplex;
@@ -273,6 +274,7 @@ public abstract class Heuristica extends ChallengeSolver {
 
         Arrays.sort(aisles, (a1, a2) -> Integer.compare(pesosAisle[a2.id], pesosAisle[a1.id]));
         pasada();
+        System.out.println("Solucion H2: " + rta.getValue());
 
     }
 
@@ -362,6 +364,8 @@ public abstract class Heuristica extends ChallengeSolver {
 
         if (cplex.solve()) {
             Double posiblerta = cplex.getValue(waveSize) / cplex.getValue(nAislesCP);
+            printElapsedTime(stopWatch);
+            System.out.println("encontre solucion nAislesCP: " + cplex.getValue(nAislesCP) + " rta: " + posiblerta);
 
             if (mnrta < posiblerta) {
                 mnrta = posiblerta;
@@ -381,14 +385,18 @@ public abstract class Heuristica extends ChallengeSolver {
             }
 
             if (getRemainingTime(stopWatch) <= changui) {
+                System.out.println("me quede sin tiempo y no halle solucion mejor");
                 return false;
             }
 
             return true;
         } else {
             if (getRemainingTime(stopWatch) > changui) {
+                printElapsedTime(stopWatch);
+                System.out.println("la solucion hallada es optima");
                 return false;
             } else {
+                System.out.println("me quede sin tiempo y no halle solucion mejor");
                 return false;
             }
         }
@@ -397,6 +405,7 @@ public abstract class Heuristica extends ChallengeSolver {
     public void findOptimalSolution(StopWatch stopWatch) throws IloException {
 
         do {
+            System.out.println("-----------------------------");
             double thisRta = mnrta + 0.005;
             haySolucion.setExpr(cplex.sum(waveSize, cplex.prod(-thisRta, nAislesCP)));
         } while (runCplex(stopWatch));
