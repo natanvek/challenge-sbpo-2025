@@ -69,11 +69,10 @@ public class COMBO2 extends Heuristica {
         topSizes.sort((s1, s2) -> Integer.compare(s1, s2));
         int minTopSize = Math.max(topSizes.get(0) - 1, 1);
         int maxTopSize = Math.min(topSizes.get(topSizes.size() - 1), tope);
-        for (int k = minTopSize; k <= maxTopSize; ++k) {
+        for (int k = minTopSize; k <= maxTopSize; ++k)
             for (EfficientCart m : rankings2.get(k))
                 for (Aisle a : m.my_aisles)
                     aislesVanAux.add(a);
-        }
 
         Set<Order> ordersVanAux = new HashSet<>();
 
@@ -83,11 +82,9 @@ public class COMBO2 extends Heuristica {
         aislesVan = new ArrayList<>(aislesVanAux);
 
         Map<Integer, Integer> disponible = new HashMap<>();
-        for (Aisle a : aislesVan) {
-            for (Map.Entry<Integer, Integer> entry : a.items.entrySet()) {
+        for (Aisle a : aislesVan)
+            for (Map.Entry<Integer, Integer> entry : a.items.entrySet())
                 disponible.put(entry.getKey(), disponible.getOrDefault(entry.getKey(), 0) + entry.getValue());
-            }
-        }
 
         for (Order o : orders) {
             ordersVanAux.add(o);
@@ -109,29 +106,23 @@ public class COMBO2 extends Heuristica {
         aCP = cplex.boolVarArray(aislesVan.size());
         oCP = cplex.boolVarArray(ordersVan.size());
 
-        int pos = 0;
-        for (Aisle a : aislesVan)
-            a.pos = pos++;
+        for (int i = 0; i < aislesVan.size(); ++i)
+            aislesVan.get(i).pos = i;
 
-        pos = 0;
-        for (Order o : ordersVan)
-            o.pos = pos++;
+        for (int i = 0; i < ordersVan.size(); ++i)
+            ordersVan.get(i).pos = i;
 
 
         for (int i = 0; i < nItems; i++) {
             IloLinearNumExpr item_i_enOrders = cplex.linearNumExpr();
             IloLinearNumExpr item_i_enAisles = cplex.linearNumExpr();
-            for (Order o : ordersVan) {
-                if (o.items.getOrDefault(i, 0) > 0) {
+            for (Order o : ordersVan)
+                if (o.items.getOrDefault(i, 0) > 0)
                     item_i_enOrders.addTerm(oCP[o.pos], o.items.getOrDefault(i, 0));
-                }
-            }
 
-            for (Aisle a : aislesVan) {
-                if (a.items.getOrDefault(i, 0) > 0) {
+            for (Aisle a : aislesVan)
+                if (a.items.getOrDefault(i, 0) > 0)
                     item_i_enAisles.addTerm(aCP[a.pos], a.items.getOrDefault(i, 0));
-                }
-            }
 
             cplex.addLe(item_i_enOrders, item_i_enAisles);
         }
@@ -153,24 +144,38 @@ public class COMBO2 extends Heuristica {
         // imprimir range
 
         obj = cplex.numExpr();
-        haySolucion = cplex.addLe(1e-3, obj);
-
-        // // === EMPHASIZE FEASIBILITY OVER OPTIMALITY ===
-        cplex.setParam(IloCplex.Param.Emphasis.MIP, 1); // 1 = feasibility, 0 = optimality
-
-        cplex.setParam(IloCplex.Param.MIP.Limits.CutsFactor, 1.0); // Reduce cantidad de cortes
-
-        cplex.setParam(IloCplex.Param.MIP.Cuts.MIRCut, -1); // Let CPLEX decide
-        cplex.setParam(IloCplex.Param.MIP.Cuts.Gomory, -1);
-        cplex.setParam(IloCplex.Param.MIP.Cuts.Implied, -1);
-
+        haySolucion = cplex.addLe(1e-3, obj); 
     }
 
-    
+    public void improveSolutionsWithCplex(StopWatch stopWatch) throws IloException {
+
+        int maxTopSize = (int) aisleRange.getUB();
+
+        IloRange[] cons = new IloRange[aislesVan.size()];
+        for (Aisle a : aislesVan)
+            cons[a.pos] = cplex.addEq(aCP[a.pos], 0); // inicialmente todas = 0
+
+        for (int k = (int) Math.floor(aisleRange.getLB()); k <= maxTopSize; ++k) {
+            for (EfficientCart m : rankings2.get(k)) {
+                for (Aisle a : m.my_aisles)
+                    cons[a.pos].setBounds(1, 1);
+
+                findOptimalSolution(stopWatch);
+
+                for (Aisle a : m.my_aisles)
+                    cons[a.pos].setBounds(0, 0);
+            }
+
+        }
+
+        cplex.delete(cons);
+    }
 
     @Override
     public ChallengeSolution solve(StopWatch stopWatch) {
         init();
+
+        printElapsedTime(stopWatch);
         runRanking();
 
         mnrta = rta.getValue();
@@ -181,19 +186,19 @@ public class COMBO2 extends Heuristica {
             setUpHCplex();
 
             printElapsedTime(stopWatch);
-            System.out.println("probando heuristica");
-            findOptimalSolution(stopWatch);
+            improveSolutionsWithCplex(stopWatch);
 
             printElapsedTime(stopWatch);
-            System.out.println("probando optimo");
-            
+            findOptimalSolution(stopWatch);
+
             if (getRemainingTime(stopWatch) > 100) {
                 cplex = new IloCplex();
                 setUpCplex();
                 changui = 5;
+                printElapsedTime(stopWatch);
                 findOptimalSolution(stopWatch);
             }
-            printElapsedTime(stopWatch);
+
         } catch (
 
         Exception e) {

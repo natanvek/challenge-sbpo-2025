@@ -14,12 +14,9 @@ import ilog.cplex.IloCplex;
 public abstract class Heuristica extends ChallengeSolver {
 
     protected static class Order {
-        public int id;
+        public int id, size, pos;
         public Map<Integer, Integer> items;
-        public int size;
-        public int pos;
 
-        // Constructor para inicializar Order
         public Order(int _id, Map<Integer, Integer> _items, int _size) {
             this.id = _id;
             this.items = _items;
@@ -28,12 +25,9 @@ public abstract class Heuristica extends ChallengeSolver {
     }
 
     protected static class Aisle {
-        public int id;
+        public int id, size, pos;
         public Map<Integer, Integer> items;
-        public int size;
-        public int pos;
 
-        // Constructor para inicializar Order
         public Aisle(int _id, Map<Integer, Integer> _items, int _size) {
             this.id = _id;
             this.items = _items;
@@ -43,9 +37,6 @@ public abstract class Heuristica extends ChallengeSolver {
 
     protected Order[] orders;
     protected Aisle[] aisles;
-    protected Aisle[] idToAisle;
-
-    protected Aisle[] aisles_sorted;
 
     protected int nOrders;
     protected int nAisles;
@@ -53,14 +44,10 @@ public abstract class Heuristica extends ChallengeSolver {
     protected int tope;
     protected EfficientCart rta;
 
-    public int[] available_inicial;
-    public Set<Integer> aisles_iniciales = new HashSet<>();
-
     public Heuristica(List<Map<Integer, Integer>> _orders, List<Map<Integer, Integer>> _aisles, int _nItems,
             int waveSizeLB, int waveSizeUB) {
         super(_orders, _aisles, _nItems, waveSizeLB, waveSizeUB);
 
-        available_inicial = new int[nItems];
         aisles = new Aisle[_aisles.size()];
         nItems = _nItems;
 
@@ -72,36 +59,26 @@ public abstract class Heuristica extends ChallengeSolver {
                 aisles[a].size += entry.getValue();
         }
 
-        aisles_sorted = Arrays.copyOf(aisles, aisles.length);
-        idToAisle = Arrays.copyOf(aisles, aisles.length);
-        Arrays.sort(aisles_sorted, (a1, a2) -> Integer.compare(a1.size, a2.size));
-
         List<Order> ordersh_aux = new ArrayList<>();
 
         for (int o = 0; o < _orders.size(); o++) {
-            int t = 0;
-            double[] sabotea = new double[nItems];
+            int orderSize = 0;
             boolean anda = true;
             for (Map.Entry<Integer, Integer> entry : _orders.get(o).entrySet()) {
                 Integer elem = entry.getKey();
                 Integer cant = entry.getValue();
-                t += cant;
-                sabotea[elem] = 0;
+                orderSize += cant;
                 int hay = 0;
                 for (Aisle a : aisles)
                     hay += Math.min(a.items.getOrDefault(elem, 0), cant);
 
                 if (hay < cant)
                     anda = false;
-
-                sabotea[elem] = (double) hay / cant;
             }
 
-            // Collections.sort(o_items, (i1, i2) -> Double.compare(sabotea[i1.getKey()],
-            // sabotea[i2.getKey()]));
 
-            // if(t <= waveSizeUB && anda) ojo con esto que me descuajeringa el id
-            ordersh_aux.add(new Order(o, _orders.get(o), t));
+            if(orderSize <= waveSizeUB && anda)
+                ordersh_aux.add(new Order(o, _orders.get(o), orderSize));
 
         }
 
@@ -145,9 +122,9 @@ public abstract class Heuristica extends ChallengeSolver {
         }
 
         public double getValue() {
-            if (aisleCount() + aisles_iniciales.size() == 0)
+            if (aisleCount() == 0)
                 return 0.0;
-            return (double) cantItems / (aisleCount() + aisles_iniciales.size());
+            return (double) cantItems / aisleCount();
         }
 
         public int getCantItems() {
@@ -156,7 +133,7 @@ public abstract class Heuristica extends ChallengeSolver {
 
         public int getTope() {
             if (getValue() < 1e-5)
-                return nAisles - 1;
+                return nAisles;
             return Math.min((int) Math.floor(waveSizeUB / getValue()), nAisles);
         }
 
@@ -185,29 +162,7 @@ public abstract class Heuristica extends ChallengeSolver {
                 Inventory.addAisle(a);
         }
 
-        public Set<Order> getOrders() {
-            Set<Order> rta_orders = new HashSet<>();
 
-            setAvailable();
-
-            for (Order o : orders)
-                if (getCantItems() + o.size <= waveSizeUB && Inventory.checkAndRemove(o.items)) {
-                    rta_orders.add(o);
-                    addOrder(o);
-                }
-
-            return rta_orders;
-        }
-
-        // asegurate de haber ejecutado resetAisles antes
-
-        // asegurate de llamarlo después de fill
-        public void removeRedundantAisles() {
-            for (Aisle p : aisles_sorted)
-                if (hasAisle(p) && Inventory.checkAndRemove(p.items))
-                    my_aisles.remove(p);
-
-        }
     }
 
     public boolean insertCart(PriorityQueue<EfficientCart> queue, EfficientCart newCart, Integer regSize) {
@@ -251,7 +206,6 @@ public abstract class Heuristica extends ChallengeSolver {
 
     public void updateRta(EfficientCart ec) {
         EfficientCart copy = new EfficientCart(ec);
-        copy.removeRedundantAisles();
         if (ec.cantItems >= waveSizeLB) {
             rta.update(copy);
             tope = Math.min(tope, rta.getTope());
@@ -279,7 +233,6 @@ public abstract class Heuristica extends ChallengeSolver {
         long hours = elapsedMillis / (1000 * 60 * 60);
         long minutes = (elapsedMillis / (1000 * 60)) % 60;
         long seconds = (elapsedMillis / 1000) % 60;
-        System.out.println(String.format("Tiempo transcurrido: %02d:%02d:%02d", hours, minutes, seconds));
     }
 
     protected IloCplex cplex;
@@ -324,75 +277,77 @@ public abstract class Heuristica extends ChallengeSolver {
     }
 
     public void setUpCplex() throws IloException {
+
         cplex.setOut(null);
 
-        aCP = cplex.boolVarArray(nAisles);
-        oCP = cplex.boolVarArray(nOrders);
+        Set<Aisle> aislesVanAux = new HashSet<>();
 
-        for (Order o : orders) {
-            if (o.size > waveSizeUB)
-                cplex.addEq(oCP[o.id], 0);
-        }
+        for (Aisle a : aisles)
+            aislesVanAux.add(a);
 
-        aislesVan = new ArrayList<>();
-        int pos = 0;
-        for (Aisle a : aisles) {
-            aislesVan.add(a);
-            a.pos = pos++; // Asignar el id como posición
-        }
+        Set<Order> ordersVanAux = new HashSet<>();
 
-        ordersVan = new ArrayList<>();
-        pos = 0;
-        for (Order o : orders) {
-            ordersVan.add(o);
-            o.pos = pos++; // Asignar el id como posición
-        }
+        // --------------------------------------------------------
 
+        // --------------------------------------------------------
+        aislesVan = new ArrayList<>(aislesVanAux);
         Map<Integer, Integer> disponible = new HashMap<>();
-        for (Aisle a : aisles) {
-            for (Map.Entry<Integer, Integer> entry : a.items.entrySet()) {
+        for (Aisle a : aislesVan)
+            for (Map.Entry<Integer, Integer> entry : a.items.entrySet())
                 disponible.put(entry.getKey(), disponible.getOrDefault(entry.getKey(), 0) + entry.getValue());
-            }
-        }
 
         for (Order o : orders) {
+            ordersVanAux.add(o);
             for (Map.Entry<Integer, Integer> entry : o.items.entrySet()) {
                 if (disponible.getOrDefault(entry.getKey(), 0) < entry.getValue()) {
-                    cplex.addEq(oCP[o.pos], 0);
+                    ordersVanAux.remove(o);
                     break;
                 }
             }
         }
 
+        for (Order o : orders)
+            if (o.size > waveSizeUB)
+                ordersVanAux.remove(o);
+
+        ordersVan = new ArrayList<>(ordersVanAux);
+
+        aCP = cplex.boolVarArray(aislesVan.size());
+        oCP = cplex.boolVarArray(ordersVan.size());
+
+        for (int i = 0; i < aislesVan.size(); ++i)
+            aislesVan.get(i).pos = i;
+
+        for (int i = 0; i < ordersVan.size(); ++i)
+            ordersVan.get(i).pos = i;
+
         for (int i = 0; i < nItems; i++) {
             IloLinearNumExpr item_i_enOrders = cplex.linearNumExpr();
             IloLinearNumExpr item_i_enAisles = cplex.linearNumExpr();
-            for (Order o : ordersVan) {
-                if (o.items.getOrDefault(i, 0) > 0) {
+            for (Order o : ordersVan)
+                if (o.items.getOrDefault(i, 0) > 0)
                     item_i_enOrders.addTerm(oCP[o.pos], o.items.getOrDefault(i, 0));
-                }
-            }
 
-            for (Aisle a : aislesVan) {
-                if (a.items.getOrDefault(i, 0) > 0) {
+            for (Aisle a : aislesVan)
+                if (a.items.getOrDefault(i, 0) > 0)
                     item_i_enAisles.addTerm(aCP[a.pos], a.items.getOrDefault(i, 0));
-                }
-            }
 
             cplex.addLe(item_i_enOrders, item_i_enAisles);
         }
 
         waveSize = cplex.linearNumExpr();
-        for (Order o : orders)
+        for (Order o : ordersVan)
             waveSize.addTerm(oCP[o.pos], o.size);
 
         cplex.addRange(waveSizeLB, waveSize, waveSizeUB);
 
         nAislesCP = cplex.linearNumExpr();
-        for (Aisle a : aisles)
+        for (Aisle a : aislesVan)
             nAislesCP.addTerm(aCP[a.pos], 1);
 
         aisleRange = cplex.addRange(1, nAislesCP, tope);
+
+        // imprimir range
 
         obj = cplex.numExpr();
         haySolucion = cplex.addLe(1e-3, obj);
@@ -421,7 +376,7 @@ public abstract class Heuristica extends ChallengeSolver {
                     if (cplex.getValue(aCP[a.pos]) > 0.5)
                         rtaAisles.add(a.id);
 
-                if (Math.floor(waveSizeUB / mnrta + 1e-4) < Math.floor(aisleRange.getUB() + 1e-4))
+                if (Math.floor(waveSizeUB / mnrta + 1e-5) < Math.floor(aisleRange.getUB() + 1e-5))
                     aisleRange.setUB(Math.floor(waveSizeUB / mnrta + 1e-4));
             }
 
@@ -441,14 +396,10 @@ public abstract class Heuristica extends ChallengeSolver {
 
     public void findOptimalSolution(StopWatch stopWatch) throws IloException {
 
-        while (true) {
+        do {
             double thisRta = mnrta + 0.005;
             haySolucion.setExpr(cplex.sum(waveSize, cplex.prod(-thisRta, nAislesCP)));
-
-            if (!runCplex(stopWatch))
-                break;
-
-        }
+        } while (runCplex(stopWatch));
 
     }
 
@@ -478,20 +429,5 @@ public abstract class Heuristica extends ChallengeSolver {
         return Math.max(1, Math.min(1000, (int) ((minutos * 1000.0 * 60.0) / (tope_por_fill * nAisles))));
     }
 
-    public ChallengeSolution getSolution() {
-        Set<Integer> rta_orders = new HashSet<>(), rta_aisles = new HashSet<>();
-
-        rta.setAvailable();
-
-        for (Aisle a : rta.my_aisles)
-            rta_aisles.add(a.id);
-
-        for (Order o : orders)
-            if (rta.getCantItems() + o.size <= waveSizeUB && Inventory.checkAndRemove(o.items)) {
-                rta_orders.add(o.id);
-                rta.addOrder(o);
-            }
-
-        return new ChallengeSolution(rta_orders, rta_aisles);
-    }
+    
 }
