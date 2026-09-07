@@ -3,3 +3,6 @@
 /target/
 myenv
 local
+venv/
+__pycache__/
+*.pyc
